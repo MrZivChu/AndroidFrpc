@@ -1,50 +1,26 @@
 <resources>
-    <string name="app_name">Frpc_Android</string>
-    <string name="title_activity_main">FRPC_ANDROID</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
+    <string name="app_name">frpc</string>
+    <string name="start_frpc">start frpc</string>
+    <string name="quit">QUIT</string>
+    <string name="server_addr">server_addr</string>
+    <string name="server_port">server_port</string>
+    <string name="token">token</string>
+    <string name="type">type</string>
+    <string name="local_ip">local_ip</string>
+    <string name="local_port">local_port</string>
+    <string name="remote_port">remote_port</string>
+    <string name="common">[common]</string>
 
-    <string name="menu_home">配置文件</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
+    <string name="local_config">[本地服务配置]</string>
 
-    <string name="home_second">Home Second</string>
-    <string name="permissionReason">请授予存储权限，用于读写frp配置文件</string>
-    <string name="action_add">添加</string>
-    <string name="action_add_text">新建配置文本</string>
-    <string name="action_add_url">从网址导入</string>
-    <string name="action_add_file">从文件导入</string>
-    <string name="action_add_scan">扫描二维码</string>
+    <string name="local_config_name">服务名称</string>
+    <string name="local_config_name_hint">字母和数字下划线组合</string>
+    <string name="reset_frpc">重置配置</string>
 
-
-    <string name="action_save">保存</string>
-    <string name="action_template">模板</string>
-    <string name="titleInputFileName">请输入文件名称</string>
-    <string name="cancel">取消</string>
-    <string name="done">确定</string>
-    <string name="tipSaveSuccess">保存成功</string>
-    <string name="actionDeleteSuccess">已删除 </string>
-    <string name="actionDeleteFailed"> 删除失败</string>
-    <string name="titleModifyFileName">修改文件名称</string>
-    <string name="notOpened">未开启</string>
-    <string name="hasOpened">已开启</string>
-    <string name="notSelectIni">未选择配置文件</string>
-    <string name="needStopService">请先关闭服务</string>
-    <string name="title_about">关于</string>
-    <string name="title_logcat">logcat</string>
-    <string name="noName">未命名</string>
-    <string name="logcat_copy">复制</string>
-    <string name="logcat_delete">删除</string>
-    <string name="copySuccess">复制成功</string>
-    <string name="titleTemplate">模板文件</string>
-    <string name="frpc_version">frpc v0.39.1</string>
-    <string name="dialogConfirmTitle">提示</string>
-    <string name="configDeleteConfirm">确定删除该条配置</string>
-    <string name="tipServiceRunning">该配置正在运行中，请先关闭</string>
-    <string name="tipWaitService">正在启动服务</string>
-
+    <string name="ts_load_default_config_success">重载默认配置成功</string>
+    <string name="ts_load_default_config_fail">重载默认配置失败</string>
+    <string name="frpc_status_running">frpc is running</string>
+    <string name="frpc_status_starting">frpc starting ...</string>
+    <string name="frpc_status_started">frpc already started</string>
+    <string name="frpc_status_stopped">frpc stopped</string>
 </resources>
