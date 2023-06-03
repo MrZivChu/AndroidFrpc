@@ -10,6 +10,11 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.ViewPager2;
+
+import org.xutils.x;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,22 +23,35 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 
-public class MainActivity extends Activity {
-    private static final String DEFAULT_FRPC_CONFIG_FILE = "frpc.ini";
-    private File FRPC_CONFIG_FILE;
-
-    private EditText etServerAddr, etServerPort, etServerToken, etLocalConfigName, etLocalType, etLocalIp, etLocalPort, etRemotePort;
-
+public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FRPC_CONFIG_FILE = new File(getFilesDir(), DEFAULT_FRPC_CONFIG_FILE);
         setContentView(R.layout.activity_main);
-        initViews();
+        x.Ext.init(getApplication());
+
+        ViewPager2 viewPager = findViewById(R.id.viewPager);
+        List<Fragment> fragmentLis = new ArrayList<>();
+        PreviewActivity previewActivity = new PreviewActivity();
+        PlaybackActivity playbackActivity = new PlaybackActivity();
+        fragmentLis.add(previewActivity);
+        fragmentLis.add(playbackActivity);
+        ViewPageAdapter viewPageAdapter = new ViewPageAdapter(this, fragmentLis);
+        Toast.makeText(this, "4", Toast.LENGTH_LONG);
+        viewPager.setAdapter(viewPageAdapter);
+        Toast.makeText(this, "5", Toast.LENGTH_LONG);
+        viewPager.setCurrentItem(0);
+
+        FRPC_CONFIG_FILE = new File(getFilesDir(), DEFAULT_FRPC_CONFIG_FILE);
     }
 
+    private static final String DEFAULT_FRPC_CONFIG_FILE = "frpc.ini";
+    private File FRPC_CONFIG_FILE;
+    private EditText etServerAddr, etServerPort, etServerToken, etLocalConfigName, etLocalType, etLocalIp, etLocalPort, etRemotePort;
     @Override
     protected void onResume() {
         super.onResume();

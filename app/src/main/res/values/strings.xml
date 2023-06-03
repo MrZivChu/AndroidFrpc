@@ -23,4 +23,18 @@
     <string name="frpc_status_starting">frpc starting ...</string>
     <string name="frpc_status_started">frpc already started</string>
     <string name="frpc_status_stopped">frpc stopped</string>
+    <string name="login">登录</string>
+    <string name="preview">预览</string>
+    <string name="ip">192.168.0.103</string>
+    <string name="pwd">HikCDJDNF</string>
+    <string name="stop">停止</string>
+    <string name="ok">确定</string>
+    <string name="leftMove">左旋转</string>
+    <string name="rightMove">右旋转</string>
+    <string name="upMove">上旋转</string>
+    <string name="downMove">下旋转</string>
+    <string name="确认">ok</string>
+    <string name="cancel">取消</string>
+    <string name="setting">设置</string>
+    <string name="inputPwd">请输入密码</string>
 </resources>
