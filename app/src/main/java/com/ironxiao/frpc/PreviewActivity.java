@@ -1,6 +1,7 @@
 package com.ironxiao.frpc;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
@@ -23,17 +24,19 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.hcnetsdk.jna.CameraHelper;
+import com.hikvision.netsdk.INT_PTR;
 import com.hikvision.netsdk.PTZCommand;
 
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
+import java.io.File;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class PreviewActivity extends Fragment {
-    private static final String TAG = PreviewActivity.class.getName();
+    private static final String TAG = "--zwh-- PreviewActivity";
     private static final int ENUM_TICK = 1;
     private static final int ENUM_Login_Failed = 2;
     private static final int ENUM_Login_Success = 3;
@@ -187,8 +190,8 @@ public class PreviewActivity extends Fragment {
             String pwd = ref.getString("pwd", "HikCDJDNF");
             Integer port = ref.getInt("port", 8000);
             userID = CameraHelper.OnLogin(ip, "admin", pwd, port);
+            Log.d(TAG, "登录信息: " + ip + "=" + port + "=" + userID);
             if (userID == -1) {
-                Log.d(TAG, "登录失败");
                 Message msg = new Message();
                 msg.what = ENUM_Login_Failed;
                 hander.sendMessage(msg);
@@ -201,6 +204,7 @@ public class PreviewActivity extends Fragment {
     }
 
     void OnLoginFailed() {
+        Log.d(TAG, "登录失败" + CameraHelper.GetLastError());
         Toast.makeText(this.getContext(), "登录失败:" + CameraHelper.GetLastError(), Toast.LENGTH_SHORT).show();
     }
 
@@ -220,8 +224,12 @@ public class PreviewActivity extends Fragment {
             return;
         }
         Log.d(TAG, "请求预览");
-        previewHandle_ = CameraHelper.OnRealPlay(surfaceView_);
+        previewHandle_ = CameraHelper.OnRealPlay(userID, surfaceView_);
         if (previewHandle_ < 0) {
+            INT_PTR ff = new INT_PTR();
+            ff.iValue = CameraHelper.GetLastError();
+            String ss = CameraHelper.GetLastErrorMsg(ff);
+            Log.d(TAG, "播放失败:" + ss);
             Toast.makeText(this.getContext(), "播放失败:" + CameraHelper.GetLastError(), Toast.LENGTH_SHORT).show();
         }
     }
@@ -246,8 +254,7 @@ public class PreviewActivity extends Fragment {
         OnStopPreview();
     }
 
-    void OnStopPreview()
-    {
+    void OnStopPreview() {
         if (previewHandle_ != -1) {
             Log.d(TAG, "退出预览");
             CameraHelper.OnStopRealPlay(previewHandle_);

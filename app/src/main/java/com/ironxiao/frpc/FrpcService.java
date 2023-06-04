@@ -7,6 +7,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
@@ -14,9 +15,9 @@ import java.io.File;
 import frpclib.Frpclib;
 
 public class FrpcService extends Service {
+    private static final String TAG = "--zwh-- FrpcService";
     private Notification notification;
     private boolean running = false;
-
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -27,10 +28,9 @@ public class FrpcService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        NotificationChannel mChannel = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            mChannel = new NotificationChannel(getString(R.string.frpc_status_running), getString(R.string.app_name),
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationChannel mChannel = new NotificationChannel(getString(R.string.frpc_status_running), getString(R.string.app_name),
                     NotificationManager.IMPORTANCE_LOW);
             notificationManager.createNotificationChannel(mChannel);
             notification = new Notification.Builder(getApplicationContext(), getString(R.string.frpc_status_running)).build();
@@ -43,22 +43,22 @@ public class FrpcService extends Service {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             startForeground(1, notification);
         }
-        final String msg;
         if (!running) {
-            msg = getString(R.string.frpc_status_starting);
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     running = true;
-                    File file = new File(getFilesDir(), "frpc.ini");
-                    String savePath = file.getAbsolutePath();
-                    Frpclib.run(savePath);
+                    File file = new File(getFilesDir(), FrpcConfig.KEY_FRP_INI_NAME);
+                    if(file.exists()) {
+                        String savePath = file.getAbsolutePath();
+                        Frpclib.run(savePath);
+                    }
                 }
             }).start();
+            Log.d(TAG, "frpc run success");
         } else {
-            msg = getString(R.string.frpc_status_started);
+            Log.d(TAG, "frpc already run");
         }
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -66,6 +66,6 @@ public class FrpcService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Frpclib.stop();
-        Toast.makeText(this, getString(R.string.frpc_status_stopped), Toast.LENGTH_SHORT).show();
+        Log.d(TAG, getString(R.string.frpc_status_stopped));
     }
 }

@@ -36,10 +36,12 @@ public class InputPwdDialog extends Dialog {
         okBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(pwdEdit.getText().toString().equals("admin123")){
+                if (pwdEdit.getText().toString().equals("admin123")) {
                     hide();
                     CameraInfoSetting cameraInfoSetting = new CameraInfoSetting(view.getContext());
                     cameraInfoSetting.show();
+                } else {
+                    Toast.makeText(getContext(), "密码错误", Toast.LENGTH_SHORT).show();
                 }
             }
         });

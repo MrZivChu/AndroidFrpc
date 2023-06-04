@@ -7,36 +7,21 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="300dp"
-        android:layout_height="280dp"
+        android:layout_height="230dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <EditText
-            android:id="@+id/editPort2"
-            android:layout_width="210dp"
-            android:layout_height="48dp"
-            android:layout_marginTop="12dp"
-            android:autofillHints=""
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:minHeight="48dp"
-            android:text="8000"
-            android:textAlignment="center"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editPwd3" />
-
         <Button
             android:id="@+id/cancelBtn"
             android:layout_width="88dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="32dp"
             android:layout_marginEnd="16dp"
             android:text="@string/cancel"
             app:layout_constraintEnd_toStartOf="@+id/guideline6"
-            app:layout_constraintTop_toBottomOf="@+id/editPort2"
+            app:layout_constraintTop_toBottomOf="@+id/editPwd3"
             tools:ignore="DuplicateClickableBoundsCheck" />
 
         <Button
@@ -44,10 +29,10 @@
             android:layout_width="88dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="32dp"
             android:text="@string/ok"
             app:layout_constraintStart_toStartOf="@+id/guideline6"
-            app:layout_constraintTop_toBottomOf="@+id/editPort2"
+            app:layout_constraintTop_toBottomOf="@+id/editPwd3"
             tools:ignore="DuplicateClickableBoundsCheck" />
 
         <EditText

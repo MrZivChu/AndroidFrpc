@@ -41,7 +41,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class PlaybackActivity extends Fragment {
-    private static final String TAG = PlaybackActivity.class.getName();
+    private static final String TAG = "--zwh-- PlaybackActivity";
     public static final int ENUM_RecoverPlayback = 1;
 
     private SurfaceView surfaceView_ = null;
@@ -88,7 +88,7 @@ public class PlaybackActivity extends Fragment {
                         timeStart.dwMinute = minute;
                         startTimeTextView.setText(FormatTimer(timeStart));
                         dialog.hide();
-                        OnPreview();
+                        OnPlayback();
                     }
                 });
                 dialog.show();
@@ -109,7 +109,7 @@ public class PlaybackActivity extends Fragment {
                         timeStop.dwMinute = minute;
                         endTimeTextView.setText(FormatTimer(timeStop));
                         dialog.hide();
-                        OnPreview();
+                        OnPlayback();
                     }
                 });
                 dialog.show();
@@ -140,8 +140,8 @@ public class PlaybackActivity extends Fragment {
         return year + "/" + month + "/" + day + " " + hour + ":" + minute;
     }
 
-    void OnPreview() {
-        Log.d(TAG, "OnPreview");
+    void OnPlayback() {
+        Log.d(TAG, "OnPlayback");
         int userID = CameraHelper.GetUserID();
         if (userID == -1) {
             return;
@@ -196,7 +196,7 @@ public class PlaybackActivity extends Fragment {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case ENUM_RecoverPlayback:
-                    OnPreview();
+                    OnPlayback();
                     break;
                 default:
                     break;

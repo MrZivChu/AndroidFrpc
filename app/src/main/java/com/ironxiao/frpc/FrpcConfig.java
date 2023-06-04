@@ -12,17 +12,14 @@ import java.util.Map;
 
 public class FrpcConfig {
     private ArrayList<Node> nodes;
-    private static final String FRPC_INI_PATH = "/data/local/tmp/frpc_test.ini";
-
     public static final String KEY_SERVER_ADDR = "server_addr";
     public static final String KEY_SERVER_PORT = "server_port";
     public static final String KEY_SERVER_TOKEN = "token";
-    //    public static final String KEY_LOCAL_CONFIG_NAME= "server_addr";
     public static final String KEY_LOCAL_TYPE = "type";
     public static final String KEY_LOCAL_IP = "local_ip";
     public static final String KEY_LOCAL_PORT = "local_port";
     public static final String KEY_REMOTE_PORT = "remote_port";
-
+    public static final String KEY_FRP_INI_NAME = "frpc.ini";
     public FrpcConfig() {
         nodes = new ArrayList<>();
     }
@@ -52,17 +49,13 @@ public class FrpcConfig {
         }
     }
 
-
     public static class Node {
         private String name;
-
         private LinkedHashMap<String, String> nodeInfo;
-
         public Node(String name) {
             this.name = "[" + name + "]";
             nodeInfo = new LinkedHashMap<>();
         }
-
         public void add(String key, String value) {
             nodeInfo.put(key, value);
         }

@@ -6,6 +6,7 @@ import android.view.SurfaceView;
 import android.widget.Toast;
 
 import com.hikvision.netsdk.HCNetSDK;
+import com.hikvision.netsdk.INT_PTR;
 import com.hikvision.netsdk.NET_DVR_PREVIEWINFO;
 import com.hikvision.netsdk.NET_DVR_VOD_PARA;
 import com.hikvision.netsdk.PTZCommand;
@@ -40,13 +41,13 @@ public class CameraHelper {
         return userID_;
     }
 
-    public static int OnRealPlay(SurfaceView surfaceView) {
+    public static int OnRealPlay(int userID, SurfaceView surfaceView) {
         NET_DVR_PREVIEWINFO playInfo = new NET_DVR_PREVIEWINFO();
         playInfo.lChannel = 1;
         playInfo.dwStreamType = 0;
         playInfo.bBlocked = 1;
         playInfo.hHwnd = surfaceView.getHolder();
-        int iRet = HCNetSDK.getInstance().NET_DVR_RealPlay_V40(0, playInfo, null);
+        int iRet = HCNetSDK.getInstance().NET_DVR_RealPlay_V40(userID, playInfo, null);
         if (iRet < 0) {
             Log.e("DeviceSystem", "NET_DVR_RealPlay_V40 error!");
             return -1;
@@ -88,12 +89,12 @@ public class CameraHelper {
         }
     }
 
-    public static int OnPlayBackByTime(int iLogID, NET_DVR_VOD_PARA vodParma) {
-        if (iLogID < 0 || vodParma == null) {
+    public static int OnPlayBackByTime(int userID, NET_DVR_VOD_PARA vodParma) {
+        if (userID < 0 || vodParma == null) {
             Log.e("SimpleDemo", "PlayBackByTime_v40_jni failed with error param");
             return -1;
         }
-        int iPlaybackID = HCNetSDK.getInstance().NET_DVR_PlayBackByTime_V40(iLogID, vodParma);
+        int iPlaybackID = HCNetSDK.getInstance().NET_DVR_PlayBackByTime_V40(userID, vodParma);
         if (iPlaybackID < 0) {
             Log.e("SimpleDemo", "NET_DVR_PlayBackByTime_V40 is failed!Err:" + HCNetSDK.getInstance().NET_DVR_GetLastError());
             return -2;
@@ -145,4 +146,7 @@ public class CameraHelper {
         return HCNetSDK.getInstance().NET_DVR_GetLastError();
     }
 
+    public static String GetLastErrorMsg(INT_PTR errorID) {
+        return HCNetSDK.getInstance().NET_DVR_GetErrorMsg(errorID);
+    }
 }
