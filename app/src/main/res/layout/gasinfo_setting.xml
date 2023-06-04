@@ -1,6 +1,473 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="350dp"
+        android:layout_height="650dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="70dp"
+            android:layout_marginBottom="20dp"
+            android:text="取消"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="70dp"
+            android:layout_marginBottom="20dp"
+            android:text="确定 "
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ScrollView
+            android:layout_width="346dp"
+            android:layout_height="520dp"
+            android:layout_marginBottom="80dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <EditText
+                        android:id="@+id/et5y"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:ems="10"
+                        android:inputType="number"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv5y"
+                        app:layout_constraintStart_toEndOf="@+id/tv5y"
+                        app:layout_constraintTop_toTopOf="@+id/tv5y" />
+
+                    <EditText
+                        android:id="@+id/et7y"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="17dp"
+                        android:ems="10"
+                        android:inputType="number"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv7y"
+                        app:layout_constraintStart_toEndOf="@+id/tv7y"
+                        app:layout_constraintTop_toTopOf="@+id/tv7y" />
+
+                    <EditText
+                        android:id="@+id/et8y"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="17dp"
+                        android:ems="10"
+                        android:inputType="number"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv8y"
+                        app:layout_constraintStart_toEndOf="@+id/tv8y"
+                        app:layout_constraintTop_toTopOf="@+id/tv8y" />
+
+                    <TextView
+                        android:id="@+id/tv8y"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="52dp"
+                        android:layout_marginTop="30dp"
+                        android:text="二级警报值"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv7y" />
+
+                    <TextView
+                        android:id="@+id/tv7y"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="52dp"
+                        android:layout_marginTop="30dp"
+                        android:text="一级警报值"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv6y" />
+
+                    <EditText
+                        android:id="@+id/et6y"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="29dp"
+                        android:ems="10"
+                        android:inputType="text"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv6y"
+                        app:layout_constraintStart_toEndOf="@+id/tv6y"
+                        app:layout_constraintTop_toTopOf="@+id/tv6y" />
+
+                    <TextView
+                        android:id="@+id/tv6y"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="52dp"
+                        android:layout_marginTop="30dp"
+                        android:text="气体类型"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv5y" />
+
+                    <TextView
+                        android:id="@+id/tv5y"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="52dp"
+                        android:layout_marginTop="16dp"
+                        android:text="气体1地址"
+                        android:textColor="#ff008577"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <EditText
+                        android:id="@+id/et5"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:ems="10"
+                        android:inputType="number"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv5"
+                        app:layout_constraintStart_toEndOf="@+id/tv5"
+                        app:layout_constraintTop_toTopOf="@+id/tv5" />
+
+                    <EditText
+                        android:id="@+id/et7"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="17dp"
+                        android:ems="10"
+                        android:inputType="number"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv7"
+                        app:layout_constraintStart_toEndOf="@+id/tv7"
+                        app:layout_constraintTop_toTopOf="@+id/tv7" />
+
+                    <EditText
+                        android:id="@+id/et8"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="17dp"
+                        android:ems="10"
+                        android:inputType="number"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv8"
+                        app:layout_constraintStart_toEndOf="@+id/tv8"
+                        app:layout_constraintTop_toTopOf="@+id/tv8" />
+
+                    <TextView
+                        android:id="@+id/tv8"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="52dp"
+                        android:layout_marginTop="30dp"
+                        android:text="二级警报值"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv7" />
+
+                    <TextView
+                        android:id="@+id/tv7"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="52dp"
+                        android:layout_marginTop="30dp"
+                        android:text="一级警报值"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv6" />
+
+                    <EditText
+                        android:id="@+id/et6"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="29dp"
+                        android:ems="10"
+                        android:inputType="text"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv6"
+                        app:layout_constraintStart_toEndOf="@+id/tv6"
+                        app:layout_constraintTop_toTopOf="@+id/tv6" />
+
+                    <TextView
+                        android:id="@+id/tv6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="52dp"
+                        android:layout_marginTop="30dp"
+                        android:text="气体类型"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv5" />
+
+                    <TextView
+                        android:id="@+id/tv5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="52dp"
+                        android:layout_marginTop="16dp"
+                        android:text="气体2地址"
+                        android:textColor="#ff008577"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <EditText
+                        android:id="@+id/et1"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:ems="10"
+                        android:inputType="number"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv1"
+                        app:layout_constraintStart_toEndOf="@+id/tv1"
+                        app:layout_constraintTop_toTopOf="@+id/tv1" />
+
+                    <EditText
+                        android:id="@+id/et3"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="17dp"
+                        android:ems="10"
+                        android:inputType="number"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv3"
+                        app:layout_constraintStart_toEndOf="@+id/tv3"
+                        app:layout_constraintTop_toTopOf="@+id/tv3" />
+
+                    <EditText
+                        android:id="@+id/et4"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="17dp"
+                        android:ems="10"
+                        android:inputType="number"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv4"
+                        app:layout_constraintStart_toEndOf="@+id/tv4"
+                        app:layout_constraintTop_toTopOf="@+id/tv4" />
+
+                    <TextView
+                        android:id="@+id/tv4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="52dp"
+                        android:layout_marginTop="30dp"
+                        android:text="二级警报值"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv3" />
+
+                    <TextView
+                        android:id="@+id/tv3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="52dp"
+                        android:layout_marginTop="30dp"
+                        android:text="一级警报值"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv2" />
+
+                    <EditText
+                        android:id="@+id/et2"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="29dp"
+                        android:ems="10"
+                        android:inputType="text"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv2"
+                        app:layout_constraintStart_toEndOf="@+id/tv2"
+                        app:layout_constraintTop_toTopOf="@+id/tv2" />
+
+                    <TextView
+                        android:id="@+id/tv2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="52dp"
+                        android:layout_marginTop="30dp"
+                        android:text="气体类型"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv1" />
+
+                    <TextView
+                        android:id="@+id/tv1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="52dp"
+                        android:layout_marginTop="16dp"
+                        android:text="气体3地址"
+                        android:textColor="#ff008577"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <EditText
+                        android:id="@+id/et5m"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:ems="10"
+                        android:inputType="number"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv5m"
+                        app:layout_constraintStart_toEndOf="@+id/tv5m"
+                        app:layout_constraintTop_toTopOf="@+id/tv5m" />
+
+                    <EditText
+                        android:id="@+id/et7m"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="17dp"
+                        android:ems="10"
+                        android:inputType="number"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv7m"
+                        app:layout_constraintStart_toEndOf="@+id/tv7m"
+                        app:layout_constraintTop_toTopOf="@+id/tv7m" />
+
+                    <EditText
+                        android:id="@+id/et8m"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="17dp"
+                        android:ems="10"
+                        android:inputType="number"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv8m"
+                        app:layout_constraintStart_toEndOf="@+id/tv8m"
+                        app:layout_constraintTop_toTopOf="@+id/tv8m" />
+
+                    <TextView
+                        android:id="@+id/tv8m"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="52dp"
+                        android:layout_marginTop="30dp"
+                        android:text="二级警报值"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv7m" />
+
+                    <TextView
+                        android:id="@+id/tv7m"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="52dp"
+                        android:layout_marginTop="30dp"
+                        android:text="一级警报值"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv6m" />
+
+                    <EditText
+                        android:id="@+id/et6m"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="29dp"
+                        android:ems="10"
+                        android:inputType="text"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv6m"
+                        app:layout_constraintStart_toEndOf="@+id/tv6m"
+                        app:layout_constraintTop_toTopOf="@+id/tv6m" />
+
+                    <TextView
+                        android:id="@+id/tv6m"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="52dp"
+                        android:layout_marginTop="30dp"
+                        android:text="气体类型"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv5m" />
+
+                    <TextView
+                        android:id="@+id/tv5m"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="52dp"
+                        android:layout_marginTop="16dp"
+                        android:text="气体4地址"
+                        android:textColor="#ff008577"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+        </ScrollView>
+
+        <EditText
+            android:id="@+id/et0"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:ems="10"
+            android:inputType="number"
+            android:text="01"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toBottomOf="@+id/tv0"
+            app:layout_constraintStart_toEndOf="@+id/tv0"
+            app:layout_constraintTop_toTopOf="@+id/tv0" />
+
+        <TextView
+            android:id="@+id/tv0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="55dp"
+            android:layout_marginTop="20dp"
+            android:text="主机地址："
+            android:textColor="#ff008577"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

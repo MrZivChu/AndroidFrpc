@@ -21,11 +21,15 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".GasInfoSetting"
+            android:exported="false" />
+        <activity
             android:name=".InputPwdDialog"
             android:exported="true" />
         <activity
             android:name=".CameraInfoSetting"
             android:exported="true" />
+
         <service
             android:name=".FrpcService"
             android:enabled="true"
@@ -36,6 +40,7 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

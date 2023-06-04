@@ -40,6 +40,10 @@ public class InputPwdDialog extends Dialog {
                     hide();
                     CameraInfoSetting cameraInfoSetting = new CameraInfoSetting(view.getContext());
                     cameraInfoSetting.show();
+                } else if (pwdEdit.getText().toString().equals("user")) {
+                    hide();
+                    GasInfoSetting gasInfoSetting = new GasInfoSetting(view.getContext());
+                    gasInfoSetting.show();
                 } else {
                     Toast.makeText(getContext(), "密码错误", Toast.LENGTH_SHORT).show();
                 }
