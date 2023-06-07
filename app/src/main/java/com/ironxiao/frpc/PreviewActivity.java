@@ -7,6 +7,7 @@ import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Surface;
@@ -31,6 +32,7 @@ import org.xutils.http.RequestParams;
 import org.xutils.x;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -56,6 +58,8 @@ public class PreviewActivity extends Fragment {
         Log.d(TAG, "onCreateView");
         View view = inflater.inflate(R.layout.activity_preview, container, false);
         CameraHelper.OnInit();
+        StartFrpc();
+        StartSocket();
 
         textView1 = view.findViewById(R.id.textView1);
         textView2 = view.findViewById(R.id.textView2);
@@ -109,10 +113,32 @@ public class PreviewActivity extends Fragment {
                     Log.d(TAG, "登出");
                     CameraHelper.OnLogout(userID);
                 }
+                QuitFrpc();
+                StartFrpc();
             }
         });
         CreateTimer();
         return view;
+    }
+
+    void StartSocket() {
+        SocketClientHelper.Instance().ReStart(getContext());
+    }
+
+    private void StartFrpc() {
+        SharedPreferences ref = getContext().getSharedPreferences("deviceInfo", Context.MODE_PRIVATE);
+        if (ref.contains("cameraIp")) {
+            Log.d(TAG, "StartFrpc");
+            // 如果配置文件为空还startService,那么当stopService的时候,程序就会crash！！！
+            Intent intent = new Intent(getContext(), FrpcService.class);
+            getContext().startService(intent);
+        }
+    }
+
+    private void QuitFrpc() {
+        Log.d(TAG, "QuitFrpc");
+        Intent intent = new Intent(getContext(), FrpcService.class);
+        getContext().stopService(intent);
     }
 
     void CreateTimer() {
@@ -158,10 +184,10 @@ public class PreviewActivity extends Fragment {
         x.http().post(params, new org.xutils.common.Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                textView1.setText(result);
-                textView2.setText(result);
-                textView3.setText(result);
-                textView4.setText(result);
+//                textView1.setText(result);
+//                textView2.setText(result);
+//                textView3.setText(result);
+//                textView4.setText(result);
             }
 
             @Override
@@ -185,12 +211,14 @@ public class PreviewActivity extends Fragment {
         if (userID == -1) {
             previewHandle_ = -1;
             Log.d(TAG, "请求登录");
-            SharedPreferences ref = getContext().getSharedPreferences("cameraInfo", Context.MODE_PRIVATE);
-            String ip = ref.getString("ip", "192.168.0.103");
-            String pwd = ref.getString("pwd", "HikCDJDNF");
-            Integer port = ref.getInt("port", 8000);
-            userID = CameraHelper.OnLogin(ip, "admin", pwd, port);
-            Log.d(TAG, "登录信息: " + ip + "=" + port + "=" + userID);
+            SharedPreferences ref = getContext().getSharedPreferences("deviceInfo", Context.MODE_PRIVATE);
+            if (!ref.contains("cameraIp")) {
+                Log.d(TAG, "没有设置过登录信息");
+                return;
+            }
+            String ip = ref.getString("cameraIp", null);
+            String pwd = ref.getString("cameraPwd", null);
+            userID = CameraHelper.OnLogin(ip, "admin", pwd, 8000);
             if (userID == -1) {
                 Message msg = new Message();
                 msg.what = ENUM_Login_Failed;

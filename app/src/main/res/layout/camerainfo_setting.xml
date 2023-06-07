@@ -7,32 +7,62 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="300dp"
-        android:layout_height="230dp"
+        android:layout_height="350dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <EditText
+            android:id="@+id/serverPort"
+            android:layout_width="210dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="84dp"
+            android:autofillHints=""
+            android:ems="10"
+            android:hint="@string/inputServerPort"
+            android:inputType="textPersonName"
+            android:minHeight="48dp"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editPwd3" />
+
+        <EditText
+            android:id="@+id/serverIP"
+            android:layout_width="210dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:autofillHints=""
+            android:ems="10"
+            android:hint="@string/inputServerIP"
+            android:inputType="textPersonName"
+            android:minHeight="48dp"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editPwd3" />
+
         <Button
             android:id="@+id/cancelBtn"
             android:layout_width="88dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="28dp"
             android:text="@string/cancel"
             app:layout_constraintEnd_toStartOf="@+id/guideline6"
-            app:layout_constraintTop_toBottomOf="@+id/editPwd3"
+            app:layout_constraintTop_toBottomOf="@+id/serverPort"
             tools:ignore="DuplicateClickableBoundsCheck" />
 
         <Button
             android:id="@+id/okBtn"
             android:layout_width="88dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="20dp"
             android:text="@string/ok"
             app:layout_constraintStart_toStartOf="@+id/guideline6"
-            app:layout_constraintTop_toBottomOf="@+id/editPwd3"
+            app:layout_constraintTop_toBottomOf="@+id/serverPort"
             tools:ignore="DuplicateClickableBoundsCheck" />
 
         <EditText
@@ -42,10 +72,9 @@
             android:layout_marginTop="12dp"
             android:autofillHints=""
             android:ems="10"
-            android:hint="@string/pwd"
+            android:hint="@string/inputCameraPwd"
             android:inputType="textPassword"
             android:minHeight="48dp"
-            android:text="@string/pwd"
             android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -66,9 +95,9 @@
             android:layout_marginTop="24dp"
             android:autofillHints=""
             android:ems="10"
+            android:hint="@string/inputCameraIP"
             android:inputType="textPersonName"
             android:minHeight="48dp"
-            android:text="@string/ip"
             android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

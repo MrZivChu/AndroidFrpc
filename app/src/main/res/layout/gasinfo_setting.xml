@@ -61,6 +61,7 @@
                         android:layout_marginStart="24dp"
                         android:ems="10"
                         android:inputType="number"
+                        android:text="0001"
                         android:textAlignment="center"
                         app:layout_constraintBottom_toBottomOf="@+id/tv5y"
                         app:layout_constraintStart_toEndOf="@+id/tv5y"
@@ -160,6 +161,7 @@
                         android:layout_marginStart="24dp"
                         android:ems="10"
                         android:inputType="number"
+                        android:text="0002"
                         android:textAlignment="center"
                         app:layout_constraintBottom_toBottomOf="@+id/tv5"
                         app:layout_constraintStart_toEndOf="@+id/tv5"
@@ -259,10 +261,11 @@
                         android:layout_marginStart="24dp"
                         android:ems="10"
                         android:inputType="number"
+                        android:text="0003"
                         android:textAlignment="center"
                         app:layout_constraintBottom_toBottomOf="@+id/tv1"
                         app:layout_constraintStart_toEndOf="@+id/tv1"
-                        app:layout_constraintTop_toTopOf="@+id/tv1" />
+                        app:layout_constraintTop_toTopOf="@+id/tv1"/>
 
                     <EditText
                         android:id="@+id/et3"
@@ -358,6 +361,7 @@
                         android:layout_marginStart="24dp"
                         android:ems="10"
                         android:inputType="number"
+                        android:text="0004"
                         android:textAlignment="center"
                         app:layout_constraintBottom_toBottomOf="@+id/tv5m"
                         app:layout_constraintStart_toEndOf="@+id/tv5m"

@@ -1,24 +1,16 @@
 package com.ironxiao.frpc;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 
 public class CameraInfoSetting extends Dialog {
 
@@ -37,10 +29,14 @@ public class CameraInfoSetting extends Dialog {
         Button cancelBtn = findViewById(R.id.cancelBtn);
         EditText ipEdit = findViewById(R.id.editIP3);
         EditText pwdEdit = findViewById(R.id.editPwd3);
+        EditText serverIpEdit = findViewById(R.id.serverIP);
+        EditText serverPortEdit = findViewById(R.id.serverPort);
 
-        SharedPreferences ref = getContext().getSharedPreferences("cameraInfo", Context.MODE_PRIVATE);
-        ipEdit.setText(ref.getString("ip", "192.168.0.103"));
-        pwdEdit.setText(ref.getString("pwd", "HikCDJDNF"));
+        SharedPreferences ref = getContext().getSharedPreferences("deviceInfo", Context.MODE_PRIVATE);
+        ipEdit.setText(ref.getString("cameraIp", null));
+        pwdEdit.setText(ref.getString("cameraPwd", null));
+        serverIpEdit.setText(ref.getString("serverIP", null));
+        serverPortEdit.setText(ref.getString("serverPort", null));
 
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,23 +47,25 @@ public class CameraInfoSetting extends Dialog {
         okBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences pref = getContext().getSharedPreferences("cameraInfo", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = pref.edit();
-                editor.putString("ip", ipEdit.getText().toString());
-                editor.putString("pwd", pwdEdit.getText().toString());
-                editor.putInt("port", 8000);
-                editor.commit();
-                hide();
+                SaveCameraInfo(ipEdit.getText().toString(), pwdEdit.getText().toString(), serverIpEdit.getText().toString(), serverPortEdit.getText().toString());
+                SaveFrpConfig(ipEdit.getText().toString());
                 EventManager.Instance().DisPatch(NotifyType.CameraInfoSetComplete, null);
-
-                saveConfig(ipEdit.getText().toString());
-                QuitFrpc();
-                StartFrpc();
+                hide();
             }
         });
     }
 
-    public void saveConfig(String localIP) {
+    void SaveCameraInfo(String ip, String pwd, String serverIp, String serverPort) {
+        SharedPreferences pref = getContext().getSharedPreferences("deviceInfo", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("cameraIp", ip);
+        editor.putString("cameraPwd", pwd);
+        editor.putString("serverIP", serverIp);
+        editor.putString("serverPort", serverPort);
+        editor.commit();
+    }
+
+    void SaveFrpConfig(String localIP) {
         File file = new File(getContext().getFilesDir(), FrpcConfig.KEY_FRP_INI_NAME);
         FrpcConfig config = new FrpcConfig();
         FrpcConfig.Node nodeCommon = new FrpcConfig.Node("common");
@@ -84,16 +82,6 @@ public class CameraInfoSetting extends Dialog {
         config.addNode(nodeLocal);
 
         config.saveTo(file.getAbsolutePath());
-    }
-
-    private void StartFrpc() {
-        Intent intent = new Intent(getContext(), FrpcService.class);
-        getContext().startService(intent);
-    }
-
-    private void QuitFrpc() {
-        Intent intent = new Intent(getContext(), FrpcService.class);
-        getContext().stopService(intent);
     }
 
 }

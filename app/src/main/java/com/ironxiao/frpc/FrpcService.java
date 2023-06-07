@@ -55,9 +55,9 @@ public class FrpcService extends Service {
                     }
                 }
             }).start();
-            Log.d(TAG, "frpc run success");
+            Log.d(TAG, "frpc运行成功");
         } else {
-            Log.d(TAG, "frpc already run");
+            Log.d(TAG, "frpc已经运行");
         }
         return super.onStartCommand(intent, flags, startId);
     }
@@ -66,6 +66,6 @@ public class FrpcService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Frpclib.stop();
-        Log.d(TAG, getString(R.string.frpc_status_stopped));
+        Log.d(TAG, "frpc已经停止");
     }
 }

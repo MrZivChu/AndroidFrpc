@@ -34,8 +34,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         x.Ext.init(getApplication());
 
-        StartFrpc();
-
         ViewPager2 viewPager = findViewById(R.id.viewPager);
         List<Fragment> fragmentLis = new ArrayList<>();
         PreviewActivity previewActivity = new PreviewActivity();
@@ -47,10 +45,5 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(viewPageAdapter);
         Toast.makeText(this, "5", Toast.LENGTH_LONG);
         viewPager.setCurrentItem(0);
-    }
-
-    private void StartFrpc() {
-        Intent intent = new Intent(getApplicationContext(), FrpcService.class);
-        getApplicationContext().startService(intent);
     }
 }

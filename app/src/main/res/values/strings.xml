@@ -11,22 +11,9 @@
     <string name="remote_port">remote_port</string>
     <string name="common">[common]</string>
 
-    <string name="local_config">[本地服务配置]</string>
-
-    <string name="local_config_name">服务名称</string>
-    <string name="local_config_name_hint">字母和数字下划线组合</string>
-    <string name="reset_frpc">重置配置</string>
-
-    <string name="ts_load_default_config_success">重载默认配置成功</string>
-    <string name="ts_load_default_config_fail">重载默认配置失败</string>
     <string name="frpc_status_running">frpc is running</string>
-    <string name="frpc_status_starting">frpc starting ...</string>
-    <string name="frpc_status_started">frpc already started</string>
-    <string name="frpc_status_stopped">frpc stopped</string>
     <string name="login">登录</string>
     <string name="preview">预览</string>
-    <string name="ip">192.168.0.103</string>
-    <string name="pwd">HikCDJDNF</string>
     <string name="stop">停止</string>
     <string name="ok">确定</string>
     <string name="leftMove">左旋转</string>
@@ -36,5 +23,9 @@
     <string name="确认">ok</string>
     <string name="cancel">取消</string>
     <string name="setting">设置</string>
+    <string name="inputCameraPwd">请输入摄像头密码</string>
+    <string name="inputCameraIP">请输入摄像头地址</string>
+    <string name="inputServerPort">请输入服务器端口号</string>
+    <string name="inputServerIP">请输入服务器地址</string>
     <string name="inputPwd">请输入密码</string>
 </resources>
