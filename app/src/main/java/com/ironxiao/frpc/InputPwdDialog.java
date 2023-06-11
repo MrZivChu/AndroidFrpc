@@ -1,7 +1,6 @@
 package com.ironxiao.frpc;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
 import android.content.Context;

@@ -1,11 +1,7 @@
 package com.ironxiao.frpc;
 
-import android.app.Application;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
-
-import com.google.android.material.internal.ContextUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,6 +14,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class SocketClientHelper {
+    private static final String TAG = "--zwh-- SocketClientHelper";
     private static SocketClientHelper instance;
 
     public static SocketClientHelper Instance() {
@@ -27,7 +24,6 @@ public class SocketClientHelper {
         return instance;
     }
 
-    private static final String TAG = "--zwh-- SocketClientHelper";
     private Socket client_ = null;
     private Thread thread_ = null;
     private int overTime = 5; // 秒
@@ -37,14 +33,11 @@ public class SocketClientHelper {
     private String cmd_;
 
     public void ReStart(Context context) {
-        if (context != null) {
-            SharedPreferences ref = context.getSharedPreferences("deviceInfo", Context.MODE_PRIVATE);
-            if (ref.contains("serverIP") && ref.contains("serverPort") && ref.contains("command")) {
-                serverIp_ = ref.getString("serverIP", "");
-                serverPort_ = Integer.parseInt(ref.getString("serverPort", ""));
-                cmd_ = ref.getString("command", "");
-                CheckAbnormalCase();
-            }
+        if (LocalBaseDataHelper.Instance().GetSocketIp(context) != null && LocalBaseDataHelper.Instance().GetSocketPort(context) != null && LocalBaseDataHelper.Instance().GetCommand(context) != null) {
+            serverIp_ = LocalBaseDataHelper.Instance().GetSocketIp(context);
+            serverPort_ = Integer.parseInt(LocalBaseDataHelper.Instance().GetSocketPort(context));
+            cmd_ = LocalBaseDataHelper.Instance().GetCommand(context);
+            CheckAbnormalCase();
         }
     }
 
@@ -68,7 +61,9 @@ public class SocketClientHelper {
                         String inputLine;
                         while ((inputLine = stdIn.readLine()) != null) {
                             Log.d(TAG, "收到服务端消息: " + inputLine);
+                            AnalysisData(inputLine);
                             checkResponseSeconds_ = 0;
+                            Log.i(TAG, "向服务端发送命令：" + cmd_);
                             out.println(cmd_);
                         }
                     }
@@ -78,6 +73,18 @@ public class SocketClientHelper {
             }
         });
         thread_.start();
+    }
+
+    void AnalysisData(String data) {
+        if (data.length() >= 2) {
+            int count = Integer.parseInt(data.substring(0, 2), 16);
+            if (data.length() >= count * 2 + 2) {
+                for (int i = 0; i < count; i++) {
+                    int value = Integer.parseInt(data.substring(2 + 2 * i, 2 + 2 * i + 2), 16);
+                    Log.d(TAG, "AnalysisData: " + value);
+                }
+            }
+        }
     }
 
     private void CloseSocket() throws IOException {

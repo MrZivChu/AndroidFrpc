@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.File;
 
@@ -49,7 +48,7 @@ public class FrpcService extends Service {
                 public void run() {
                     running = true;
                     File file = new File(getFilesDir(), FrpcConfig.KEY_FRP_INI_NAME);
-                    if(file.exists()) {
+                    if (file.exists()) {
                         String savePath = file.getAbsolutePath();
                         Frpclib.run(savePath);
                     }

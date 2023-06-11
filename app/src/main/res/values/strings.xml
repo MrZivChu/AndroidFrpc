@@ -25,7 +25,7 @@
     <string name="setting">设置</string>
     <string name="inputCameraPwd">请输入摄像头密码</string>
     <string name="inputCameraIP">请输入摄像头地址</string>
-    <string name="inputServerPort">请输入服务器端口号</string>
-    <string name="inputServerIP">请输入服务器地址</string>
+    <string name="inputServerPort">请输入Socket端口号</string>
+    <string name="inputServerIP">请输入Socket地址</string>
     <string name="inputPwd">请输入密码</string>
 </resources>

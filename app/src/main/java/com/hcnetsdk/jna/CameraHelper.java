@@ -15,6 +15,8 @@ import com.sun.jna.Pointer;
 
 public class CameraHelper {
     private static int userID_ = -1;
+    private static int previewHandle_ = -1;
+    private static int playBackID_ = -1;
 
     public static int GetUserID() {
         return userID_;
@@ -24,12 +26,16 @@ public class CameraHelper {
         return HCNetSDK.getInstance().NET_DVR_Init();
     }
 
-    public static boolean OnLogout(int userID) {
-        userID_ = -1;
-        return HCNetSDKJNAInstance.getInstance().NET_DVR_Logout(userID);
+    public static boolean OnLogout() {
+        if (userID_ >= 0) {
+            HCNetSDKJNAInstance.getInstance().NET_DVR_Logout(userID_);
+            userID_ = -1;
+        }
+        return true;
     }
 
-    public static int OnLogin(String userip, String username, String userpassward, int port) {
+    // 请求登录次数太多，IP会被锁！！！
+    public static boolean OnLogin(String userip, String username, String userpassward, int port) {
         HCNetSDKByJNA.NET_DVR_USER_LOGIN_INFO loginInfo = new HCNetSDKByJNA.NET_DVR_USER_LOGIN_INFO();
         System.arraycopy(userip.getBytes(), 0, loginInfo.sDeviceAddress, 0, userip.length());
         System.arraycopy(username.getBytes(), 0, loginInfo.sUserName, 0, username.length());
@@ -38,41 +44,44 @@ public class CameraHelper {
         HCNetSDKByJNA.NET_DVR_DEVICEINFO_V40 deviceInfo = new HCNetSDKByJNA.NET_DVR_DEVICEINFO_V40();
         loginInfo.write();
         userID_ = HCNetSDKJNAInstance.getInstance().NET_DVR_Login_V40(loginInfo.getPointer(), deviceInfo.getPointer());
-        return userID_;
+        return userID_ != -1;
     }
 
-    public static int OnRealPlay(int userID, SurfaceView surfaceView) {
+    public static boolean OnRealPlay(SurfaceView surfaceView) {
+        if (userID_ < 0) {
+            return false;
+        }
         NET_DVR_PREVIEWINFO playInfo = new NET_DVR_PREVIEWINFO();
         playInfo.lChannel = 1;
         playInfo.dwStreamType = 0;
         playInfo.bBlocked = 1;
         playInfo.hHwnd = surfaceView.getHolder();
-        int iRet = HCNetSDK.getInstance().NET_DVR_RealPlay_V40(userID, playInfo, null);
-        if (iRet < 0) {
+        previewHandle_ = HCNetSDK.getInstance().NET_DVR_RealPlay_V40(userID_, playInfo, null);
+        if (previewHandle_ < 0) {
             Log.e("DeviceSystem", "NET_DVR_RealPlay_V40 error!");
-            return -1;
+            return false;
         }
-        boolean bRet = HCNetSDKJNAInstance.getInstance().NET_DVR_OpenSound((short) iRet);
-        if (bRet) {
-            Log.e("DeviceSystem", "NET_DVR_OpenSound Succ!");
-        }
-        return iRet;
+        HCNetSDKJNAInstance.getInstance().NET_DVR_OpenSound((short) previewHandle_);
+        return true;
     }
 
-    public static boolean OnStopRealPlay(int previewHandle) {
-        if (previewHandle < 0) {
+    public static boolean OnStopRealPlay() {
+        if (previewHandle_ < 0) {
             Log.e("DeviceSystem", "RealPlay_Stop_jni failed with error param");
             return false;
         }
-        if (!HCNetSDK.getInstance().NET_DVR_StopRealPlay(previewHandle)) {
+        if (!HCNetSDK.getInstance().NET_DVR_StopRealPlay(previewHandle_)) {
             Log.e("DeviceSystem", "RealPlay_Stop_jni failed");
             return false;
         }
         return true;
     }
 
-    public static void OnPTZControl(int previewHandle, int cmd) {
-        if (!HCNetSDK.getInstance().NET_DVR_PTZControl(previewHandle, cmd, 0)) {
+    public static void OnPTZControl(int cmd) {
+        if (previewHandle_ < 0) {
+            return;
+        }
+        if (!HCNetSDK.getInstance().NET_DVR_PTZControl(previewHandle_, cmd, 0)) {
             System.out.println("PTZControlWithSpeed  PAN_RIGHT 0 faild!" + " err: " + HCNetSDK.getInstance().NET_DVR_GetLastError());
         } else {
             System.out.println("PTZControlWithSpeed  PAN_RIGHT 0 succ");
@@ -82,71 +91,58 @@ public class CameraHelper {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        if (!HCNetSDK.getInstance().NET_DVR_PTZControl(previewHandle, cmd, 1)) {
+        if (!HCNetSDK.getInstance().NET_DVR_PTZControl(previewHandle_, cmd, 1)) {
             System.out.println("PTZControlWithSpeed  PAN_RIGHT 1 faild!" + " err: " + HCNetSDK.getInstance().NET_DVR_GetLastError());
         } else {
             System.out.println("PTZControlWithSpeed  PAN_RIGHT 1 succ");
         }
     }
 
-    public static int OnPlayBackByTime(int userID, NET_DVR_VOD_PARA vodParma) {
-        if (userID < 0 || vodParma == null) {
+    public static boolean OnPlayBackByTime(NET_DVR_VOD_PARA vodParma) {
+        if (userID_ < 0 || vodParma == null) {
             Log.e("SimpleDemo", "PlayBackByTime_v40_jni failed with error param");
-            return -1;
+            return false;
         }
-        int iPlaybackID = HCNetSDK.getInstance().NET_DVR_PlayBackByTime_V40(userID, vodParma);
-        if (iPlaybackID < 0) {
+        playBackID_ = HCNetSDK.getInstance().NET_DVR_PlayBackByTime_V40(userID_, vodParma);
+        if (playBackID_ < 0) {
             Log.e("SimpleDemo", "NET_DVR_PlayBackByTime_V40 is failed!Err:" + HCNetSDK.getInstance().NET_DVR_GetLastError());
-            return -2;
+            return false;
         }
-        if (!HCNetSDK.getInstance().NET_DVR_PlayBackControl_V40(iPlaybackID, PlaybackControlCommand.NET_DVR_PLAYSTART, null, 0, null)) {
+        if (!HCNetSDK.getInstance().NET_DVR_PlayBackControl_V40(playBackID_, PlaybackControlCommand.NET_DVR_PLAYSTART, null, 0, null)) {
             Log.e("SimpleDemo", "NET_DVR_PlayBackControl_V40 is failed!Err:" + HCNetSDK.getInstance().NET_DVR_GetLastError());
-            HCNetSDK.getInstance().NET_DVR_StopPlayBack(iPlaybackID);
-            return -3;
+            HCNetSDK.getInstance().NET_DVR_StopPlayBack(playBackID_);
+            return false;
         }
-        if (!HCNetSDK.getInstance().NET_DVR_PlayBackControl_V40(iPlaybackID, PlaybackControlCommand.NET_DVR_PLAYSTARTAUDIO, null, 0, null)) {
+        if (!HCNetSDK.getInstance().NET_DVR_PlayBackControl_V40(playBackID_, PlaybackControlCommand.NET_DVR_PLAYSTARTAUDIO, null, 0, null)) {
             Log.e("SimpleDemo", "NET_DVR_PlayBackControl_V40 is failed!Err:" + HCNetSDK.getInstance().NET_DVR_GetLastError());
-            HCNetSDK.getInstance().NET_DVR_StopPlayBack(iPlaybackID);
-            return -4;
+            HCNetSDK.getInstance().NET_DVR_StopPlayBack(playBackID_);
+            return false;
         }
-        return iPlaybackID;
+        return true;
     }
 
-    public static boolean OnStopPlayBack(int playbackID) {
-        if (playbackID < 0) {
+    public static boolean OnStopPlayBack() {
+        if (playBackID_ < 0) {
             Log.e("SimpleDemo", "StopPlayBack_jni failed with error param");
             return false;
         }
-        return HCNetSDK.getInstance().NET_DVR_StopPlayBack(playbackID);
+        return HCNetSDK.getInstance().NET_DVR_StopPlayBack(playBackID_);
     }
 
-    public static int OnGetPlayBackPos(int playbackID) {
-        return HCNetSDK.getInstance().NET_DVR_GetPlayBackPos(playbackID);
-    }
-
-    public static int OnPlayBackSurfaceChanged(int previewHandle, int nRegionNum, SurfaceView
-            surfaceView) {
-        if (previewHandle < 0 || nRegionNum < 0) {
-            Log.e("SimpleDemo", "RealPlaySurfaceChanged_jni failed with error param");
-            return -1;
+    public static int OnGetPlayBackPos() {
+        if (playBackID_ < 0) {
+            return 0;
         }
-        return HCNetSDK.getInstance().NET_DVR_PlayBackSurfaceChanged(previewHandle, nRegionNum, surfaceView.getHolder());
+        return HCNetSDK.getInstance().NET_DVR_GetPlayBackPos(playBackID_);
     }
 
-    public static int OnRealPlaySurfaceChanged(int previewHandle, int nRegionNum, SurfaceView
-            surfaceView) {
-        if (previewHandle < 0 || nRegionNum < 0) {
-            Log.e("SimpleDemo", "RealPlaySurfaceChanged_jni failed with error param");
-            return -1;
-        }
-        return HCNetSDK.getInstance().NET_DVR_RealPlaySurfaceChanged(previewHandle, nRegionNum, surfaceView.getHolder());
+    public static String GetLastErrorMsg() {
+        INT_PTR ff = new INT_PTR();
+        ff.iValue = GetLastError();
+        return HCNetSDK.getInstance().NET_DVR_GetErrorMsg(ff);
     }
 
-    public static int GetLastError() {
+    static int GetLastError() {
         return HCNetSDK.getInstance().NET_DVR_GetLastError();
-    }
-
-    public static String GetLastErrorMsg(INT_PTR errorID) {
-        return HCNetSDK.getInstance().NET_DVR_GetErrorMsg(errorID);
     }
 }

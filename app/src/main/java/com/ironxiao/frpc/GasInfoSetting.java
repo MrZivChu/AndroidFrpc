@@ -1,11 +1,9 @@
 package com.ironxiao.frpc;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -73,10 +71,7 @@ public class GasInfoSetting extends Dialog {
         String cmd = GetTxtSendText(sb.toString());
         Log.d(TAG, "cmd:" + cmd);
 
-        SharedPreferences pref = getContext().getSharedPreferences("deviceInfo", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString("command", cmd);
-        editor.commit();
+        LocalBaseDataHelper.Instance().SaveCommandData(getContext(), cmd);
         SocketClientHelper.Instance().ReStart(getContext());
     }
 
@@ -91,7 +86,7 @@ public class GasInfoSetting extends Dialog {
 
         byte[] crcbuf = StrToHexByte(sendBuf);//将16进制字符串转换成字节
         String crcString = String.format("%04x", CRCForModbus(crcbuf)); //获得校验码
-        return data + " " + crcString;//返回数据+校验码
+        return data + crcString;//返回数据+校验码
     }
 
     public static byte[] StrToHexByte(String hexString) {
