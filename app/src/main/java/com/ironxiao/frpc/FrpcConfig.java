@@ -1,6 +1,7 @@
 package com.ironxiao.frpc;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -11,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class FrpcConfig {
+    private static final String TAG = "--zwh-- FrpcConfig";
     private ArrayList<Node> nodes;
     public static final String KEY_SERVER_ADDR = "server_addr";
     public static final String KEY_SERVER_PORT = "server_port";
@@ -20,6 +22,7 @@ public class FrpcConfig {
     public static final String KEY_LOCAL_PORT = "local_port";
     public static final String KEY_REMOTE_PORT = "remote_port";
     public static final String KEY_FRP_INI_NAME = "frpc.ini";
+
     public FrpcConfig() {
         nodes = new ArrayList<>();
     }
@@ -38,20 +41,22 @@ public class FrpcConfig {
         return sb.substring(0, sb.lastIndexOf("\n"));
     }
 
-    public void saveTo(String path) {
+    public void saveTo(Context context) {
+        File file = new File(context.getFilesDir(), FrpcConfig.KEY_FRP_INI_NAME);
         String configContent = this.toString();
         try {
-            FileWriter fr = new FileWriter(path);
+            FileWriter fr = new FileWriter(file.getAbsolutePath());
             fr.write(configContent);
             fr.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.d(TAG, "保存frp文件出错: " + e.getMessage());
         }
     }
 
     public static class Node {
         private String name;
         private LinkedHashMap<String, String> nodeInfo;
+
         public Node(String name) {
             this.name = "[" + name + "]";
             nodeInfo = new LinkedHashMap<>();

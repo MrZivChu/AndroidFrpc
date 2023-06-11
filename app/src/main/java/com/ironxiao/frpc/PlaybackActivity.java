@@ -2,41 +2,24 @@ package com.ironxiao.frpc;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
-import android.app.DatePickerDialog;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.PixelFormat;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Surface;
-import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.hcnetsdk.jna.CameraHelper;
 import com.hikvision.netsdk.NET_DVR_TIME;
 import com.hikvision.netsdk.NET_DVR_VOD_PARA;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -45,7 +28,6 @@ public class PlaybackActivity extends Fragment {
     public static final int ENUM_RecoverPlayback = 1;
 
     private SurfaceView surfaceView_ = null;
-    private int playBackID_ = -1;
     private Lock lockPlayBack_ = new ReentrantLock(true);
 
     NET_DVR_TIME timeStart = new NET_DVR_TIME();
@@ -154,9 +136,9 @@ public class PlaybackActivity extends Fragment {
         vodParma.byStreamType = 0;
         vodParma.struIDInfo.dwChannel = 1;
         vodParma.hWnd = surfaceView_.getHolder().getSurface();
-        playBackID_ = CameraHelper.OnPlayBackByTime(userID, vodParma);
-        if (playBackID_ < 0) {
-            Toast.makeText(getContext(), "播放失败：" + CameraHelper.GetLastError() + ",errorID=" + playBackID_, Toast.LENGTH_SHORT).show();
+        boolean isSuccess = CameraHelper.OnPlayBackByTime(vodParma);
+        if (!isSuccess) {
+            Toast.makeText(getContext(), "播放失败：" + CameraHelper.GetLastErrorMsg(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -180,14 +162,11 @@ public class PlaybackActivity extends Fragment {
     }
 
     void ClosePlayback() {
-        if (playBackID_ != -1) {
-            try {
-                lockPlayBack_.lock();
-                CameraHelper.OnStopPlayBack(playBackID_);
-            } finally {
-                lockPlayBack_.unlock();
-            }
-            playBackID_ = -1;
+        try {
+            lockPlayBack_.lock();
+            CameraHelper.OnStopPlayBack();
+        } finally {
+            lockPlayBack_.unlock();
         }
     }
 
