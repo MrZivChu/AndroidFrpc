@@ -29,8 +29,8 @@ public class MainActivity extends AppCompatActivity {
         CameraHelper.OnInit();
         x.Ext.init(getApplication());
         FrpcHelper.Instance().StartFrpc(getApplicationContext());
-        SocketClientHelper.Instance().ReStart(getApplicationContext());
         LocalBaseDataHelper.Instance().SyncDataToServer(getApplicationContext());
+        SocketClientHelper.Instance().ReStart(getApplicationContext());
 
         ViewPager2 viewPager = findViewById(R.id.viewPager);
         List<Fragment> fragmentLis = new ArrayList<>();

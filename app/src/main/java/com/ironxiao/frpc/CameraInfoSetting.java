@@ -43,14 +43,14 @@ public class CameraInfoSetting extends Dialog {
         okBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                hide();
                 FrpcHelper.Instance().SaveData(getContext(), ipEdit.getText().toString());
                 FrpcHelper.Instance().QuitFrpc(getContext());
                 FrpcHelper.Instance().StartFrpc(getContext());
-                SocketClientHelper.Instance().ReStart(getContext());
                 LocalBaseDataHelper.Instance().SaveBaseData(getContext(), ipEdit.getText().toString(), pwdEdit.getText().toString(), serverIpEdit.getText().toString(), serverPortEdit.getText().toString());
                 LocalBaseDataHelper.Instance().SyncDataToServer(getContext());
+                SocketClientHelper.Instance().ReStart(getContext());
                 EventManager.Instance().DisPatch(NotifyType.CameraInfoSetComplete, null);
-                hide();
             }
         });
     }

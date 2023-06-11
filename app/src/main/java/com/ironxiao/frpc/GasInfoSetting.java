@@ -28,8 +28,8 @@ public class GasInfoSetting extends Dialog {
         okBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                OnOk();
                 hide();
+                OnOk();
             }
         });
         cancelBtn.setOnClickListener(new View.OnClickListener() {

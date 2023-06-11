@@ -81,7 +81,6 @@ public class SocketClientHelper {
             if (data.length() >= count * 2 + 2) {
                 for (int i = 0; i < count; i++) {
                     int value = Integer.parseInt(data.substring(2 + 2 * i, 2 + 2 * i + 2), 16);
-                    Log.d(TAG, "AnalysisData: " + value);
                 }
             }
         }
