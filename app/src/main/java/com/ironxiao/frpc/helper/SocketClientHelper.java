@@ -1,7 +1,14 @@
-package com.ironxiao.frpc;
+package com.ironxiao.frpc.helper;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Message;
+import android.provider.Settings;
 import android.util.Log;
+
+import org.xutils.http.RequestParams;
+import org.xutils.x;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,6 +16,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +33,10 @@ public class SocketClientHelper {
         return instance;
     }
 
+    private final String SharedPreferencesKey = "socketInfo";
+    private final String SocketIpKey = "socketIP";
+    private final String SocketPortKey = "socketPort";
+
     private Socket client_ = null;
     private Thread thread_ = null;
     private int overTime = 5; // 秒
@@ -32,12 +45,30 @@ public class SocketClientHelper {
     private int serverPort_;
     private String cmd_;
 
+    ArrayList<DataDefines.SGasInfo> gasInfoList = new ArrayList<>();
+
     public void ReStart(Context context) {
-        if (LocalBaseDataHelper.Instance().GetSocketIp(context) != null && LocalBaseDataHelper.Instance().GetSocketPort(context) != null && LocalBaseDataHelper.Instance().GetCommand(context) != null) {
-            serverIp_ = LocalBaseDataHelper.Instance().GetSocketIp(context);
-            serverPort_ = Integer.parseInt(LocalBaseDataHelper.Instance().GetSocketPort(context));
-            cmd_ = LocalBaseDataHelper.Instance().GetCommand(context);
+        if (GetSocketIp(context) != null && GetSocketPort(context) != null && GasInfoHelper.Instance().GetCommand(context) != null) {
+            serverIp_ = GetSocketIp(context);
+            serverPort_ = Integer.parseInt(GetSocketPort(context));
+            cmd_ = GasInfoHelper.Instance().GetCommand(context);
             CheckAbnormalCase();
+        }
+        if (GasInfoHelper.Instance().GetGases(context) != null) {
+            String str = GasInfoHelper.Instance().GetGases(context);
+            String[] gasArray = str.split(";");
+            if (gasArray.length >= 4) {
+                for (int i = 0; i < 4; i++) {
+                    String[] itemArray = gasArray[i].split(",");
+                    if (itemArray.length >= 4) {
+                        DataDefines.SGasInfo item = new DataDefines.SGasInfo();
+                        item.firstValue = Integer.parseInt(itemArray[2]);
+                        item.secondValue = Integer.parseInt(itemArray[3]);
+                        item.gasName = itemArray[1];
+                        gasInfoList.add(item);
+                    }
+                }
+            }
         }
     }
 
@@ -79,11 +110,47 @@ public class SocketClientHelper {
         if (data.length() >= 2) {
             int count = Integer.parseInt(data.substring(0, 2), 16);
             if (data.length() >= count * 2 + 2) {
+                String gasValues = "";
                 for (int i = 0; i < count; i++) {
                     int value = Integer.parseInt(data.substring(2 + 2 * i, 2 + 2 * i + 2), 16);
+                    gasValues += value + ",";
+
+                    DataDefines.SGasInfo gasInfo = gasInfoList.get(i);
+                    gasInfo.gasValue = value;
+                    gasInfo.level = value >= gasInfo.secondValue ? DataDefines.EWarningLevel.SecondAlarm : (
+                            value >= gasInfo.firstValue ? DataDefines.EWarningLevel.FirstAlarm : DataDefines.EWarningLevel.Normal);
                 }
+                SyncDataToServer(gasValues);
+                EventManager.Instance().DisPatch(DataDefines.NotifyType.UpdateRealtimeGasData, gasInfoList);
             }
         }
+    }
+
+    public void SyncDataToServer(String gasValues) {
+        Log.d(TAG, "开始同步数据到服务器");
+        RequestParams params = new RequestParams("http://www.huaiantegang.com/Handler/Camera.ashx");
+        params.addBodyParameter("requestType", "UpdateRealtimeGasData");
+        params.addBodyParameter("androidID", AndroidUtils.GetAndroidID(params.getContext()));
+        params.addBodyParameter("gasValues", gasValues);
+        x.http().post(params, new org.xutils.common.Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Log.d(TAG, "同步实时数据到服务器成功");
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Log.d(TAG, "同步实时数据到服务器出错:" + ex.getMessage());
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+            }
+
+            @Override
+            public void onFinished() {
+            }
+        });
     }
 
     private void CloseSocket() throws IOException {
@@ -123,5 +190,23 @@ public class SocketClientHelper {
             }
         };
         executorService.scheduleAtFixedRate(command, 0, 1, TimeUnit.SECONDS);
+    }
+
+    public void SaveData(Context context, String socketIP, String socketPort) {
+        SharedPreferences pref = context.getSharedPreferences(SharedPreferencesKey, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(SocketIpKey, socketIP);
+        editor.putString(SocketPortKey, socketPort);
+        editor.commit();
+    }
+
+    public String GetSocketIp(Context context) {
+        SharedPreferences ref = context.getSharedPreferences(SharedPreferencesKey, Context.MODE_PRIVATE);
+        return ref.getString(SocketIpKey, null);
+    }
+
+    public String GetSocketPort(Context context) {
+        SharedPreferences ref = context.getSharedPreferences(SharedPreferencesKey, Context.MODE_PRIVATE);
+        return ref.getString(SocketPortKey, null);
     }
 }

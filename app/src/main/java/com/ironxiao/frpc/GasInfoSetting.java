@@ -10,9 +10,33 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.ironxiao.frpc.helper.CameraDataHelper;
+import com.ironxiao.frpc.helper.DataDefines;
+import com.ironxiao.frpc.helper.EventManager;
+import com.ironxiao.frpc.helper.GasInfoHelper;
+import com.ironxiao.frpc.helper.SocketClientHelper;
+
 public class GasInfoSetting extends Dialog {
 
     private static final String TAG = "--zwh-- GasInfoSetting";
+
+    EditText machineEdit;
+    EditText gas1AddrEdit;
+    EditText gas1TypeEdit;
+    EditText gas1OneWarnEdit;
+    EditText gas1TwoWarnEdit;
+    EditText gas2AddrEdit;
+    EditText gas2TypeEdit;
+    EditText gas2OneWarnEdit;
+    EditText gas2TwoWarnEdit;
+    EditText gas3AddrEdit;
+    EditText gas3TypeEdit;
+    EditText gas3OneWarnEdit;
+    EditText gas3TwoWarnEdit;
+    EditText gas4AddrEdit;
+    EditText gas4TypeEdit;
+    EditText gas4OneWarnEdit;
+    EditText gas4TwoWarnEdit;
 
     public GasInfoSetting(@NonNull Context context) {
         super(context);
@@ -23,8 +47,67 @@ public class GasInfoSetting extends Dialog {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gasinfo_setting);
 
+        machineEdit = findViewById(R.id.et0);
+
+        gas1AddrEdit = findViewById(R.id.et5y);
+        gas1TypeEdit = findViewById(R.id.et6y);
+        gas1OneWarnEdit = findViewById(R.id.et7y);
+        gas1TwoWarnEdit = findViewById(R.id.et8y);
+
+        gas2AddrEdit = findViewById(R.id.et5);
+        gas2TypeEdit = findViewById(R.id.et6);
+        gas2OneWarnEdit = findViewById(R.id.et7);
+        gas2TwoWarnEdit = findViewById(R.id.et8);
+
+        gas3AddrEdit = findViewById(R.id.et1);
+        gas3TypeEdit = findViewById(R.id.et2);
+        gas3OneWarnEdit = findViewById(R.id.et3);
+        gas3TwoWarnEdit = findViewById(R.id.et4);
+
+        gas4AddrEdit = findViewById(R.id.et5m);
+        gas4TypeEdit = findViewById(R.id.et6m);
+        gas4OneWarnEdit = findViewById(R.id.et7m);
+        gas4TwoWarnEdit = findViewById(R.id.et8m);
+
+        machineEdit.setText(GasInfoHelper.Instance().GetMachineID(getContext()));
+        String gases = GasInfoHelper.Instance().GetGases(getContext());
+        if (gases != null && !gases.isEmpty()) {
+            String[] gasArray = gases.split(";");
+            if (gasArray.length >= 4) {
+                String[] gas1Array = gasArray[0].split(",");
+                if (gas1Array.length >= 4) {
+                    gas1AddrEdit.setText(gas1Array[0]);
+                    gas1TypeEdit.setText(gas1Array[1]);
+                    gas1OneWarnEdit.setText(gas1Array[2]);
+                    gas1TwoWarnEdit.setText(gas1Array[3]);
+                }
+                String[] gas2Array = gasArray[1].split(",");
+                if (gas2Array.length >= 4) {
+                    gas2AddrEdit.setText(gas2Array[0]);
+                    gas2TypeEdit.setText(gas2Array[1]);
+                    gas2OneWarnEdit.setText(gas2Array[2]);
+                    gas2TwoWarnEdit.setText(gas2Array[3]);
+                }
+                String[] gas3Array = gasArray[2].split(",");
+                if (gas3Array.length >= 4) {
+                    gas3AddrEdit.setText(gas3Array[0]);
+                    gas3TypeEdit.setText(gas3Array[1]);
+                    gas3OneWarnEdit.setText(gas3Array[2]);
+                    gas3TwoWarnEdit.setText(gas3Array[3]);
+                }
+                String[] gas4Array = gasArray[3].split(",");
+                if (gas4Array.length >= 4) {
+                    gas4AddrEdit.setText(gas4Array[0]);
+                    gas4TypeEdit.setText(gas4Array[1]);
+                    gas4OneWarnEdit.setText(gas4Array[2]);
+                    gas4TwoWarnEdit.setText(gas4Array[3]);
+                }
+            }
+        }
+
         Button okBtn = findViewById(R.id.button);
         Button cancelBtn = findViewById(R.id.button2);
+
         okBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -41,84 +124,13 @@ public class GasInfoSetting extends Dialog {
     }
 
     void OnOk() {
-        EditText machineEdit = findViewById(R.id.et0);
-
-        EditText gas1AddrEdit = findViewById(R.id.et5y);
-        EditText gas1TypeEdit = findViewById(R.id.et6y);
-        EditText gas1OneWarnEdit = findViewById(R.id.et7y);
-        EditText gas1TwoWarnEdit = findViewById(R.id.et8y);
-
-        EditText gas2AddrEdit = findViewById(R.id.et5);
-        EditText gas2TypeEdit = findViewById(R.id.et6);
-        EditText gas2OneWarnEdit = findViewById(R.id.et7);
-        EditText gas2TwoWarnEdit = findViewById(R.id.et8);
-
-        EditText gas3AddrEdit = findViewById(R.id.et1);
-        EditText gas3TypeEdit = findViewById(R.id.et2);
-        EditText gas3OneWarnEdit = findViewById(R.id.et3);
-        EditText gas3TwoWarnEdit = findViewById(R.id.et4);
-
-        EditText gas4AddrEdit = findViewById(R.id.et5m);
-        EditText gas4TypeEdit = findViewById(R.id.et6m);
-        EditText gas4OneWarnEdit = findViewById(R.id.et7m);
-        EditText gas4TwoWarnEdit = findViewById(R.id.et8m);
-
-        String firstHex = String.format("%04x", Integer.parseInt(gas1AddrEdit.getText().toString()));
-        String endHex = String.format("%04x", Integer.parseInt(gas4AddrEdit.getText().toString()));
-        String machineHex = String.format("%02x", Integer.parseInt(machineEdit.getText().toString()));
-        StringBuilder sb = new StringBuilder();
-        sb = sb.append(machineHex).append("03").append(firstHex).append(endHex);
-        String cmd = GetTxtSendText(sb.toString());
-        Log.d(TAG, "cmd:" + cmd);
-
-        LocalBaseDataHelper.Instance().SaveCommandData(getContext(), cmd);
+        GasInfoHelper.Instance().SaveData(getContext(), machineEdit.getText().toString(),
+                gas1AddrEdit.getText().toString(), gas1TypeEdit.getText().toString(), gas1OneWarnEdit.getText().toString(), gas1TwoWarnEdit.getText().toString(),
+                gas2AddrEdit.getText().toString(), gas2TypeEdit.getText().toString(), gas2OneWarnEdit.getText().toString(), gas2TwoWarnEdit.getText().toString(),
+                gas3AddrEdit.getText().toString(), gas3TypeEdit.getText().toString(), gas3OneWarnEdit.getText().toString(), gas3TwoWarnEdit.getText().toString(),
+                gas4AddrEdit.getText().toString(), gas4TypeEdit.getText().toString(), gas4OneWarnEdit.getText().toString(), gas4TwoWarnEdit.getText().toString());
+        GasInfoHelper.Instance().SyncDataToServer(getContext());
         SocketClientHelper.Instance().ReStart(getContext());
     }
 
-    public static String GetTxtSendText(String data) {
-        //处理数字转换
-        String sendnoNull1 = data.trim();//去掉字符串前后的空格
-        String sendnoNull2 = sendnoNull1.replace(" ", "");//去掉字符串中间的空格
-        String sendNOComma = sendnoNull2.replace(',', ' ');    //去掉英文逗号
-        String sendNOComma1 = sendNOComma.replace('，', ' '); //去掉中文逗号
-        String strSendNoComma2 = sendNOComma1.replace("0x", "");   //去掉0x
-        String sendBuf = strSendNoComma2.replace("0X", "");   //去掉0X
-
-        byte[] crcbuf = StrToHexByte(sendBuf);//将16进制字符串转换成字节
-        String crcString = String.format("%04x", CRCForModbus(crcbuf)); //获得校验码
-        return data + crcString;//返回数据+校验码
-    }
-
-    public static byte[] StrToHexByte(String hexString) {
-        hexString = hexString.replace(" ", "");
-        if ((hexString.length() % 2) != 0)
-            hexString += " ";
-        byte[] returnBytes = new byte[hexString.length() / 2];
-        for (int i = 0; i < returnBytes.length; i++) {
-            String str = hexString.substring(i * 2, i * 2 + 2).replace(" ", "");
-            returnBytes[i] = (byte) Integer.parseInt(str, 16);
-        }
-        return returnBytes;
-    }
-
-    public static short CRCForModbus(byte[] data) {
-        //计算并填写CRC校验码
-        int crc = 0xffff;
-        for (int n = 0; n < data.length; n++) {
-            byte i;
-            crc = crc ^ data[n];
-            for (i = 0; i < 8; i++) {
-                int TT;
-                TT = crc & 1;
-                crc = crc >> 1;
-                crc = crc & 0x7fff;
-                if (TT == 1) {
-                    crc = crc ^ 0xa001;
-                }
-                crc = crc & 0xffff;
-            }
-        }
-        crc = ((crc & 0xFF) << 8 | (crc >> 8));//高低字节换位
-        return (short) crc;
-    }
 }

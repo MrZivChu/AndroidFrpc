@@ -1,8 +1,11 @@
-package com.ironxiao.frpc;
+package com.ironxiao.frpc.helper;
 
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
+import com.ironxiao.frpc.FrpcConfig;
+import com.ironxiao.frpc.FrpcService;
 
 import java.io.File;
 
@@ -17,7 +20,7 @@ public class FrpcHelper {
         return instance;
     }
 
-    void SaveData(Context context, String localIP) {
+    public void SaveData(Context context, String localIP) {
         String[] splits = localIP.split("\\.");
         if (splits.length >= 4) {
             FrpcConfig config = new FrpcConfig();
@@ -30,10 +33,10 @@ public class FrpcHelper {
             FrpcConfig.Node nodeLocal = new FrpcConfig.Node("camera");
             nodeLocal.add(FrpcConfig.KEY_LOCAL_TYPE, "tcp");
             nodeLocal.add(FrpcConfig.KEY_LOCAL_IP, localIP);
-            nodeLocal.add(FrpcConfig.KEY_LOCAL_PORT, String.valueOf(LocalBaseDataHelper.Instance().GetCameraPort()));
+            nodeLocal.add(FrpcConfig.KEY_LOCAL_PORT, String.valueOf(CameraDataHelper.Instance().GetCameraPort()));
 
             String port = splits[3] + splits[2].substring(0, 1);
-            LocalBaseDataHelper.Instance().SaveFrpPortData(context, port);
+            CameraDataHelper.Instance().SaveFrpPort(context, port);
             nodeLocal.add(FrpcConfig.KEY_REMOTE_PORT, port);
             config.addNode(nodeLocal);
 

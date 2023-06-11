@@ -1,26 +1,24 @@
-package com.ironxiao.frpc;
+package com.ironxiao.frpc.helper;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.provider.Settings;
 import android.util.Log;
 
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
-public class LocalBaseDataHelper {
+public class CameraDataHelper {
     private static final String TAG = "--zwh-- LocalBaseDataHelper";
-    private final String SharedPreferencesKey = "deviceInfo";
+    private final String SharedPreferencesKey = "cameraInfo";
     private final String CameraIpKey = "cameraIp";
     private final String FrpPortKey = "cameraPort";
     private final String CameraPwdKey = "cameraPwd";
-    private final String SocketIpKey = "socketIP";
-    private final String SocketPortKey = "socketPort";
-    private final String CommandKey = "command";
-    private static LocalBaseDataHelper instance;
+    private static CameraDataHelper instance;
 
-    public static LocalBaseDataHelper Instance() {
+    public static CameraDataHelper Instance() {
         if (instance == null) {
-            instance = new LocalBaseDataHelper();
+            instance = new CameraDataHelper();
         }
         return instance;
     }
@@ -32,6 +30,7 @@ public class LocalBaseDataHelper {
         Log.d(TAG, "开始同步数据到服务器");
         RequestParams params = new RequestParams("http://www.huaiantegang.com/Handler/Camera.ashx");
         params.addBodyParameter("requestType", "InsertCameraBaseData");
+        params.addBodyParameter("androidID", AndroidUtils.GetAndroidID(context));
         params.addBodyParameter("ip", GetCameraIP(context));
         params.addBodyParameter("port", GetFrpPort(context));
         params.addBodyParameter("userName", GetCameraUserName());
@@ -39,12 +38,12 @@ public class LocalBaseDataHelper {
         x.http().post(params, new org.xutils.common.Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                Log.d(TAG, "同步数据到服务器成功");
+                Log.d(TAG, "同步摄像机基础数据到服务器成功");
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Log.d(TAG, "同步数据到服务器出错:" + ex.getMessage());
+                Log.d(TAG, "同步摄像机基础数据到服务器出错:" + ex.getMessage());
             }
 
             @Override
@@ -57,24 +56,15 @@ public class LocalBaseDataHelper {
         });
     }
 
-    public void SaveBaseData(Context context, String ip, String pwd, String socketIP, String socketPort) {
+    public void SaveData(Context context, String ip, String pwd) {
         SharedPreferences pref = context.getSharedPreferences(SharedPreferencesKey, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putString(CameraIpKey, ip);
         editor.putString(CameraPwdKey, pwd);
-        editor.putString(SocketIpKey, socketIP);
-        editor.putString(SocketPortKey, socketPort);
         editor.commit();
     }
 
-    public void SaveCommandData(Context context, String data) {
-        SharedPreferences pref = context.getSharedPreferences(SharedPreferencesKey, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString(CommandKey, data);
-        editor.commit();
-    }
-
-    public void SaveFrpPortData(Context context, String data) {
+    public void SaveFrpPort(Context context, String data) {
         SharedPreferences pref = context.getSharedPreferences(SharedPreferencesKey, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putString(FrpPortKey, data);
@@ -102,20 +92,5 @@ public class LocalBaseDataHelper {
     public String GetCameraPwd(Context context) {
         SharedPreferences ref = context.getSharedPreferences(SharedPreferencesKey, Context.MODE_PRIVATE);
         return ref.getString(CameraPwdKey, null);
-    }
-
-    public String GetSocketIp(Context context) {
-        SharedPreferences ref = context.getSharedPreferences(SharedPreferencesKey, Context.MODE_PRIVATE);
-        return ref.getString(SocketIpKey, null);
-    }
-
-    public String GetSocketPort(Context context) {
-        SharedPreferences ref = context.getSharedPreferences(SharedPreferencesKey, Context.MODE_PRIVATE);
-        return ref.getString(SocketPortKey, null);
-    }
-
-    public String GetCommand(Context context) {
-        SharedPreferences ref = context.getSharedPreferences(SharedPreferencesKey, Context.MODE_PRIVATE);
-        return ref.getString(CommandKey, null);
     }
 }

@@ -1,5 +1,6 @@
 package com.ironxiao.frpc;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -17,12 +18,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.hcnetsdk.jna.CameraHelper;
-import com.hikvision.netsdk.INT_PTR;
+import com.ironxiao.frpc.helper.CameraDataHelper;
 import com.hikvision.netsdk.PTZCommand;
+import com.ironxiao.frpc.helper.DataDefines;
+import com.ironxiao.frpc.helper.EventManager;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class PreviewActivity extends Fragment {
     private static final String TAG = "--zwh-- PreviewActivity";
@@ -32,6 +34,10 @@ public class PreviewActivity extends Fragment {
     TextView textView2;
     TextView textView3;
     TextView textView4;
+    TextView textView1Name;
+    TextView textView2Name;
+    TextView textView3Name;
+    TextView textView4Name;
 
     @Nullable
     @Override
@@ -43,6 +49,10 @@ public class PreviewActivity extends Fragment {
         textView2 = view.findViewById(R.id.textView2);
         textView3 = view.findViewById(R.id.textView3);
         textView4 = view.findViewById(R.id.textView4);
+        textView1Name = view.findViewById(R.id.textView1Name);
+        textView2Name = view.findViewById(R.id.textView2Name);
+        textView3Name = view.findViewById(R.id.textView3Name);
+        textView4Name = view.findViewById(R.id.textView4Name);
         Button settingBtn = view.findViewById(R.id.settingBtn);
         Button leftBtn = view.findViewById(R.id.leftBtn);
         Button rightBtn = view.findViewById(R.id.rightBtn);
@@ -81,7 +91,7 @@ public class PreviewActivity extends Fragment {
                 CameraHelper.OnPTZControl(PTZCommand.TILT_DOWN);
             }
         });
-        EventManager.Instance().AddEventListener(NotifyType.CameraInfoSetComplete, new EventManager.OnCallback() {
+        EventManager.Instance().AddEventListener(DataDefines.NotifyType.CameraInfoSetComplete, new EventManager.OnCallback() {
             @Override
             public void Call(Object content) {
                 Log.d(TAG, "设置相机信息回调");
@@ -89,32 +99,46 @@ public class PreviewActivity extends Fragment {
                 OnReLogin();
             }
         });
+
+        HashMap<DataDefines.EWarningLevel, Integer> warningColorDic = new HashMap<DataDefines.EWarningLevel, Integer>();
+        warningColorDic.put(DataDefines.EWarningLevel.SecondAlarm, Color.argb(1f, 1f, 0f, 0f));
+        warningColorDic.put(DataDefines.EWarningLevel.FirstAlarm, Color.argb(1f, 1f, 1f, 0f));
+        warningColorDic.put(DataDefines.EWarningLevel.Normal, Color.argb(0.5f, 0.2f, 0.6f, 0.2f));
+        warningColorDic.put(DataDefines.EWarningLevel.NoResponse, Color.argb(1f, 0.75f, 0.75f, 0.75f));
+        EventManager.Instance().AddEventListener(DataDefines.NotifyType.UpdateRealtimeGasData, new EventManager.OnCallback() {
+            @Override
+            public void Call(Object content) {
+                Log.d(TAG, "气体数据实时更新回调");
+                ArrayList<DataDefines.SGasInfo> list = (ArrayList<DataDefines.SGasInfo>) content;
+                if (list.size() >= 4) {
+                    textView1Name.setText(list.get(0).gasName+"：");
+                    textView2Name.setText(list.get(1).gasName+"：");
+                    textView3Name.setText(list.get(2).gasName+"：");
+                    textView4Name.setText(list.get(3).gasName+"：");
+                    textView1.setText(String.valueOf(list.get(0).gasValue));
+                    textView2.setText(String.valueOf(list.get(1).gasValue));
+                    textView3.setText(String.valueOf(list.get(2).gasValue));
+                    textView4.setText(String.valueOf(list.get(3).gasValue));
+                    textView1.setTextColor(warningColorDic.get(list.get(0).level));
+                    textView2.setTextColor(warningColorDic.get(list.get(1).level));
+                    textView3.setTextColor(warningColorDic.get(list.get(2).level));
+                    textView4.setTextColor(warningColorDic.get(list.get(3).level));
+                }
+            }
+        });
         OnReLogin();
         return view;
     }
 
-    private final Handler hander = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case ENUM_Recover_Camera:
-                    Log.d(TAG, "恢复画面");
-                    OnPreview();
-                default:
-                    break;
-            }
-        }
-    };
-
     void OnReLogin() {
         CameraHelper.OnLogout();
-        if (LocalBaseDataHelper.Instance().GetCameraIP(getContext()) == null || LocalBaseDataHelper.Instance().GetCameraPwd(getContext()) == null) {
+        if (CameraDataHelper.Instance().GetCameraIP(getContext()) == null || CameraDataHelper.Instance().GetCameraPwd(getContext()) == null) {
             return;
         }
-        String ip = LocalBaseDataHelper.Instance().GetCameraIP(getContext());
-        String pwd = LocalBaseDataHelper.Instance().GetCameraPwd(getContext());
-        String userName = LocalBaseDataHelper.Instance().GetCameraUserName();
-        int cameraPort = LocalBaseDataHelper.Instance().GetCameraPort();
+        String ip = CameraDataHelper.Instance().GetCameraIP(getContext());
+        String pwd = CameraDataHelper.Instance().GetCameraPwd(getContext());
+        String userName = CameraDataHelper.Instance().GetCameraUserName();
+        int cameraPort = CameraDataHelper.Instance().GetCameraPort();
         boolean isSuccess = CameraHelper.OnLogin(ip, userName, pwd, cameraPort);
         Log.d(TAG, "请求登录：" + ip + "=" + pwd + "=" + userName + "=" + cameraPort + "=" + CameraHelper.GetLastErrorMsg());
         if (!isSuccess) {
@@ -134,6 +158,19 @@ public class PreviewActivity extends Fragment {
             Toast.makeText(this.getContext(), "播放失败:" + CameraHelper.GetLastErrorMsg(), Toast.LENGTH_SHORT).show();
         }
     }
+
+    private final Handler hander = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case ENUM_Recover_Camera:
+                    Log.d(TAG, "恢复画面");
+                    OnPreview();
+                default:
+                    break;
+            }
+        }
+    };
 
     @Override
     public void onDestroy() {

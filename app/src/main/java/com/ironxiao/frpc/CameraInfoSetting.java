@@ -9,6 +9,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.ironxiao.frpc.helper.CameraDataHelper;
+import com.ironxiao.frpc.helper.DataDefines;
+import com.ironxiao.frpc.helper.EventManager;
+import com.ironxiao.frpc.helper.FrpcHelper;
+import com.ironxiao.frpc.helper.SocketClientHelper;
+
 public class CameraInfoSetting extends Dialog {
 
     private static final String TAG = "--zwh-- CameraInfoSetting";
@@ -29,10 +35,10 @@ public class CameraInfoSetting extends Dialog {
         EditText serverIpEdit = findViewById(R.id.serverIP);
         EditText serverPortEdit = findViewById(R.id.serverPort);
 
-        ipEdit.setText(LocalBaseDataHelper.Instance().GetCameraIP(getContext()));
-        pwdEdit.setText(LocalBaseDataHelper.Instance().GetCameraPwd(getContext()));
-        serverIpEdit.setText(LocalBaseDataHelper.Instance().GetSocketIp(getContext()));
-        serverPortEdit.setText(LocalBaseDataHelper.Instance().GetSocketPort(getContext()));
+        ipEdit.setText(CameraDataHelper.Instance().GetCameraIP(getContext()));
+        pwdEdit.setText(CameraDataHelper.Instance().GetCameraPwd(getContext()));
+        serverIpEdit.setText(SocketClientHelper.Instance().GetSocketIp(getContext()));
+        serverPortEdit.setText(SocketClientHelper.Instance().GetSocketPort(getContext()));
 
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,10 +53,11 @@ public class CameraInfoSetting extends Dialog {
                 FrpcHelper.Instance().SaveData(getContext(), ipEdit.getText().toString());
                 FrpcHelper.Instance().QuitFrpc(getContext());
                 FrpcHelper.Instance().StartFrpc(getContext());
-                LocalBaseDataHelper.Instance().SaveBaseData(getContext(), ipEdit.getText().toString(), pwdEdit.getText().toString(), serverIpEdit.getText().toString(), serverPortEdit.getText().toString());
-                LocalBaseDataHelper.Instance().SyncDataToServer(getContext());
+                CameraDataHelper.Instance().SaveData(getContext(), ipEdit.getText().toString(), pwdEdit.getText().toString());
+                CameraDataHelper.Instance().SyncDataToServer(getContext());
+                SocketClientHelper.Instance().SaveData(getContext(), serverIpEdit.getText().toString(), serverPortEdit.getText().toString());
                 SocketClientHelper.Instance().ReStart(getContext());
-                EventManager.Instance().DisPatch(NotifyType.CameraInfoSetComplete, null);
+                EventManager.Instance().DisPatch(DataDefines.NotifyType.CameraInfoSetComplete, null);
             }
         });
     }
