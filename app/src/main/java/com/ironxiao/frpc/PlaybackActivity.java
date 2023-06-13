@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.hcnetsdk.jna.CameraHelper;
 import com.hikvision.netsdk.NET_DVR_TIME;
 import com.hikvision.netsdk.NET_DVR_VOD_PARA;
+import com.ironxiao.frpc.helper.AndroidUtils;
 
 import java.util.Calendar;
 import java.util.concurrent.locks.Lock;
@@ -53,8 +54,8 @@ public class PlaybackActivity extends Fragment {
         timeStop.dwDay = timeStart.dwDay;
         timeStop.dwHour = calendar.get(Calendar.HOUR_OF_DAY);
         timeStop.dwMinute = timeStart.dwMinute;
-        startTimeTextView.setText(FormatTimer(timeStart));
-        endTimeTextView.setText(FormatTimer(timeStop));
+        startTimeTextView.setText(AndroidUtils.FormatTimer(timeStart.dwYear, timeStart.dwMonth, timeStart.dwDay, timeStart.dwHour, timeStart.dwMinute));
+        endTimeTextView.setText(AndroidUtils.FormatTimer(timeStop.dwYear, timeStop.dwMonth, timeStop.dwDay, timeStop.dwHour, timeStop.dwMinute));
 
         startTimeTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,7 +69,7 @@ public class PlaybackActivity extends Fragment {
                         timeStart.dwDay = day;
                         timeStart.dwHour = hour;
                         timeStart.dwMinute = minute;
-                        startTimeTextView.setText(FormatTimer(timeStart));
+                        startTimeTextView.setText(AndroidUtils.FormatTimer(timeStart.dwYear, timeStart.dwMonth, timeStart.dwDay, timeStart.dwHour, timeStart.dwMinute));
                         dialog.hide();
                         OnPlayback();
                     }
@@ -89,7 +90,7 @@ public class PlaybackActivity extends Fragment {
                         timeStop.dwDay = day;
                         timeStop.dwHour = hour;
                         timeStop.dwMinute = minute;
-                        endTimeTextView.setText(FormatTimer(timeStop));
+                        endTimeTextView.setText(AndroidUtils.FormatTimer(timeStop.dwYear, timeStop.dwMonth, timeStop.dwDay, timeStop.dwHour, timeStop.dwMinute));
                         dialog.hide();
                         OnPlayback();
                     }
@@ -99,27 +100,6 @@ public class PlaybackActivity extends Fragment {
             }
         });
         return view;
-    }
-
-    String FormatTimer(NET_DVR_TIME time) {
-        String year = String.valueOf(time.dwYear);
-        String month = String.valueOf(time.dwMonth);
-        String day = String.valueOf(time.dwDay);
-        String hour = String.valueOf(time.dwHour);
-        String minute = String.valueOf(time.dwMinute);
-        if (String.valueOf(month).length() == 1) {
-            month = "0" + month;
-        }
-        if (String.valueOf(day).length() == 1) {
-            day = "0" + day;
-        }
-        if (String.valueOf(hour).length() == 1) {
-            hour = "0" + hour;
-        }
-        if (String.valueOf(minute).length() == 1) {
-            minute = "0" + minute;
-        }
-        return year + "/" + month + "/" + day + " " + hour + ":" + minute;
     }
 
     void OnPlayback() {

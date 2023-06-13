@@ -15,6 +15,7 @@ import com.hcnetsdk.jna.CameraHelper;
 import com.ironxiao.frpc.helper.CameraDataHelper;
 import com.ironxiao.frpc.helper.FrpcHelper;
 import com.ironxiao.frpc.helper.SocketClientHelper;
+import com.ironxiao.frpc.sql.HistoryDBManager;
 
 import org.xutils.x;
 
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
         CameraHelper.OnInit();
         x.Ext.init(getApplication());
+        HistoryDBManager.initDB(getApplication());
         FrpcHelper.Instance().StartFrpc(getApplicationContext());
         CameraDataHelper.Instance().SyncDataToServer(getApplicationContext());
         SocketClientHelper.Instance().ReStart(getApplicationContext());
@@ -40,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         List<Fragment> fragmentLis = new ArrayList<>();
         fragmentLis.add(new PreviewActivity());
         fragmentLis.add(new PlaybackActivity());
+        fragmentLis.add(new HistoryActivity());
         viewPager.setAdapter(new ViewPageAdapter(this, fragmentLis));
         viewPager.setCurrentItem(0);
     }

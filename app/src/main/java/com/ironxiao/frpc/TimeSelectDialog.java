@@ -35,7 +35,6 @@ public class TimeSelectDialog extends Dialog implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.time_select_dialog);
-        SetDialogWidth();
 
         Button okBtn = findViewById(R.id.selectTimeBtn2);
         okBtn.setOnClickListener(this);
@@ -60,17 +59,5 @@ public class TimeSelectDialog extends Dialog implements View.OnClickListener {
                 }
                 break;
         }
-    }
-
-    public void SetDialogWidth() {
-        Window window = getWindow();
-        WindowManager.LayoutParams wlp = window.getAttributes();
-        Display display = window.getWindowManager().getDefaultDisplay();
-        Point point = new Point();
-        display.getSize(point);
-        wlp.width = point.x;
-        wlp.gravity = Gravity.BOTTOM;
-        window.setBackgroundDrawableResource(android.R.color.background_dark);
-        window.setAttributes(wlp);
     }
 }

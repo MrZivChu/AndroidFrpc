@@ -7,6 +7,9 @@ import android.os.Message;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.ironxiao.frpc.HistoryActivity;
+import com.ironxiao.frpc.sql.HistoryDBManager;
+
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
@@ -119,6 +122,8 @@ public class SocketClientHelper {
                     gasInfo.gasValue = value;
                     gasInfo.level = value >= gasInfo.secondValue ? DataDefines.EWarningLevel.SecondAlarm : (
                             value >= gasInfo.firstValue ? DataDefines.EWarningLevel.FirstAlarm : DataDefines.EWarningLevel.Normal);
+
+                    HistoryDBManager.AddInfo(i + 1, String.valueOf(AndroidUtils.GetTimeStampUnix()), value);
                 }
                 SyncDataToServer(gasValues);
                 EventManager.Instance().DisPatch(DataDefines.NotifyType.UpdateRealtimeGasData, gasInfoList);
