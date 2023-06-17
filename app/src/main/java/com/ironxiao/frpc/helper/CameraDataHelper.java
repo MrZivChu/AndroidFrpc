@@ -27,7 +27,7 @@ public class CameraDataHelper {
         if (GetCameraIP(context) == null || GetFrpPort(context) == null || GetCameraUserName() == null || GetCameraPwd(context) == null) {
             return;
         }
-        Log.d(TAG, "开始同步数据到服务器");
+        Log.d(TAG, "开始同步摄像机基础数据到服务器");
         RequestParams params = new RequestParams("http://www.huaiantegang.com/Handler/Camera.ashx");
         params.addBodyParameter("requestType", "InsertCameraBaseData");
         params.addBodyParameter("androidID", AndroidUtils.GetAndroidID(context));

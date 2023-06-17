@@ -17,6 +17,7 @@ public class DataDefines {
 
     public static class SGasInfo {
         public String gasName;
+        public int timeStamp;
         public int gasValue;
         public int firstValue;
         public int secondValue;
