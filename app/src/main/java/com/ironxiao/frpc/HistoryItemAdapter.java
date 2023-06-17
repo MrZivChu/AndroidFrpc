@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,16 +13,26 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.ironxiao.frpc.helper.AndroidUtils;
+import com.ironxiao.frpc.helper.DataDefines;
+import com.ironxiao.frpc.helper.ProjectUtils;
 import com.ironxiao.frpc.sql.CameraHistoryModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HistoryItemAdapter extends BaseAdapter {
     Context context_;
-    List<CameraHistoryModel> list_;
+    ArrayList<DataDefines.SGasInfo> list_;
+    int pageIndex_ = 0;
+    int pageSize_ = 0;
 
-    public HistoryItemAdapter(Context context, List<CameraHistoryModel> list) {
+    public HistoryItemAdapter(Context context) {
         context_ = context;
+    }
+
+    public void InitData(ArrayList<DataDefines.SGasInfo> list, int pageIndex, int pageSize) {
+        pageIndex_ = pageIndex;
+        pageSize_ = pageSize;
         list_ = list;
     }
 
@@ -50,13 +61,14 @@ public class HistoryItemAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) view.getTag();
         }
-        CameraHistoryModel bean = list_.get(i);
-        holder.checkTimeTV.setText(AndroidUtils.GetFormatTimeFromStampUnix(Integer.parseInt(bean.TimeStamp)));
-        holder.gasTypeTV.setText("类型");
-        holder.gasValueTV.setText(String.valueOf(bean.GasValue));
-        holder.minTV.setText("0");
-        holder.maxTV.setText("100");
-        holder.idTV.setText(String.valueOf(i + 1));
+        DataDefines.SGasInfo model = list_.get(i);
+        holder.checkTimeTV.setText(AndroidUtils.GetFormatTimeFromStampUnix(model.timeStamp));
+        holder.gasTypeTV.setText(model.gasName);
+        holder.gasValueTV.setText(String.valueOf(model.gasValue));
+        holder.minTV.setText(String.valueOf(model.firstValue));
+        holder.maxTV.setText(String.valueOf(model.secondValue));
+        holder.gasValueTV.setTextColor(ProjectUtils.GetWarnColor(model.level));
+        holder.idTV.setText(String.valueOf((pageIndex_ - 1) * pageSize_ + (i + 1)));
         return view;
     }
 

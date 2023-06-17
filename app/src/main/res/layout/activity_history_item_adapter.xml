@@ -26,50 +26,50 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.24" />
+                app:layout_constraintGuide_percent="0.30" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.86" />
+                app:layout_constraintGuide_percent="0.92" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline11"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.74" />
+                app:layout_constraintGuide_percent="0.82" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.62" />
+                app:layout_constraintGuide_percent="0.70" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline13"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.08" />
+                app:layout_constraintGuide_percent="0.1" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline15"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.44" />
+                app:layout_constraintGuide_percent="0.55" />
 
             <TextView
                 android:id="@+id/index"
-                android:layout_width="20dp"
+                android:layout_width="40dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="1"
-                android:textAlignment="center"
+                android:text="1234567"
+                android:textAlignment="textStart"
                 android:textSize="10sp"
                 app:layout_constraintEnd_toStartOf="@+id/guideline13"
                 app:layout_constraintStart_toStartOf="@+id/guideline13"

@@ -22,13 +22,18 @@ import com.ironxiao.frpc.helper.CameraDataHelper;
 import com.hikvision.netsdk.PTZCommand;
 import com.ironxiao.frpc.helper.DataDefines;
 import com.ironxiao.frpc.helper.EventManager;
+import com.ironxiao.frpc.helper.ProjectUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+class HandlerMsgID {
+    static final int ENUM_Recover_Camera = 1;
+    static final int ENUM_Update_Realtime_data = 2;
+}
+
 public class PreviewActivity extends Fragment {
     private static final String TAG = "--zwh-- PreviewActivity";
-    private static final int ENUM_Recover_Camera = 4;
     private SurfaceView surfaceView_ = null;
     TextView textView1;
     TextView textView2;
@@ -96,44 +101,49 @@ public class PreviewActivity extends Fragment {
             public void Call(Object content) {
                 Log.d(TAG, "设置相机信息回调");
                 OnStopPreview();
-                OnReLogin();
+                boolean isSuccess = OnReLogin();
+                if (isSuccess) {
+                    OnPreview();
+                }
             }
         });
 
-        HashMap<DataDefines.EWarningLevel, Integer> warningColorDic = new HashMap<DataDefines.EWarningLevel, Integer>();
-        warningColorDic.put(DataDefines.EWarningLevel.SecondAlarm, Color.argb(1f, 1f, 0f, 0f));
-        warningColorDic.put(DataDefines.EWarningLevel.FirstAlarm, Color.argb(1f, 1f, 1f, 0f));
-        warningColorDic.put(DataDefines.EWarningLevel.Normal, Color.argb(0.5f, 0.2f, 0.6f, 0.2f));
-        warningColorDic.put(DataDefines.EWarningLevel.NoResponse, Color.argb(1f, 0.75f, 0.75f, 0.75f));
         EventManager.Instance().AddEventListener(DataDefines.NotifyType.UpdateRealtimeGasData, new EventManager.OnCallback() {
             @Override
             public void Call(Object content) {
                 Log.d(TAG, "气体数据实时更新回调");
-                ArrayList<DataDefines.SGasInfo> list = (ArrayList<DataDefines.SGasInfo>) content;
-                if (list.size() >= 4) {
-                    textView1Name.setText(list.get(0).gasName+"：");
-                    textView2Name.setText(list.get(1).gasName+"：");
-                    textView3Name.setText(list.get(2).gasName+"：");
-                    textView4Name.setText(list.get(3).gasName+"：");
-                    textView1.setText(String.valueOf(list.get(0).gasValue));
-                    textView2.setText(String.valueOf(list.get(1).gasValue));
-                    textView3.setText(String.valueOf(list.get(2).gasValue));
-                    textView4.setText(String.valueOf(list.get(3).gasValue));
-                    textView1.setTextColor(warningColorDic.get(list.get(0).level));
-                    textView2.setTextColor(warningColorDic.get(list.get(1).level));
-                    textView3.setTextColor(warningColorDic.get(list.get(2).level));
-                    textView4.setTextColor(warningColorDic.get(list.get(3).level));
-                }
+                Message msg = new Message();
+                msg.what = HandlerMsgID.ENUM_Update_Realtime_data;
+                msg.obj = content;
+                hander.sendMessage(msg);
             }
         });
         OnReLogin();
         return view;
     }
 
-    void OnReLogin() {
+    void UpdateRealtimeData(Object content) {
+        ArrayList<DataDefines.SGasInfo> list = (ArrayList<DataDefines.SGasInfo>) content;
+        if (list != null && list.size() >= 4) {
+            textView1Name.setText(list.get(0).gasName + "：");
+            textView2Name.setText(list.get(1).gasName + "：");
+            textView3Name.setText(list.get(2).gasName + "：");
+            textView4Name.setText(list.get(3).gasName + "：");
+            textView1.setText(String.valueOf(list.get(0).gasValue));
+            textView2.setText(String.valueOf(list.get(1).gasValue));
+            textView3.setText(String.valueOf(list.get(2).gasValue));
+            textView4.setText(String.valueOf(list.get(3).gasValue));
+            textView1.setTextColor(ProjectUtils.GetWarnColor(list.get(0).level));
+            textView2.setTextColor(ProjectUtils.GetWarnColor(list.get(1).level));
+            textView3.setTextColor(ProjectUtils.GetWarnColor(list.get(2).level));
+            textView4.setTextColor(ProjectUtils.GetWarnColor(list.get(3).level));
+        }
+    }
+
+    boolean OnReLogin() {
         CameraHelper.OnLogout();
         if (CameraDataHelper.Instance().GetCameraIP(getContext()) == null || CameraDataHelper.Instance().GetCameraPwd(getContext()) == null) {
-            return;
+            return false;
         }
         String ip = CameraDataHelper.Instance().GetCameraIP(getContext());
         String pwd = CameraDataHelper.Instance().GetCameraPwd(getContext());
@@ -144,9 +154,10 @@ public class PreviewActivity extends Fragment {
         if (!isSuccess) {
             Log.d(TAG, "登录失败" + CameraHelper.GetLastErrorMsg());
             Toast.makeText(getContext(), "登录失败:" + CameraHelper.GetLastErrorMsg(), Toast.LENGTH_SHORT).show();
+            return false;
         } else {
             Log.d(TAG, "登录成功");
-            OnPreview();
+            return true;
         }
     }
 
@@ -163,9 +174,13 @@ public class PreviewActivity extends Fragment {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case ENUM_Recover_Camera:
+                case HandlerMsgID.ENUM_Recover_Camera:
                     Log.d(TAG, "恢复画面");
                     OnPreview();
+                    break;
+                case HandlerMsgID.ENUM_Update_Realtime_data:
+                    UpdateRealtimeData(msg.obj);
+                    break;
                 default:
                     break;
             }
@@ -200,9 +215,9 @@ public class PreviewActivity extends Fragment {
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
-        //由于这些回调函数不能直接涉及UI，所以只能使用hander
+        // 由于这些回调函数不能直接涉及UI，所以只能使用hander
         Message msg = new Message();
-        msg.what = ENUM_Recover_Camera;
+        msg.what = HandlerMsgID.ENUM_Recover_Camera;
         hander.sendMessage(msg);
     }
 

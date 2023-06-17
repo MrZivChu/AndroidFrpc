@@ -2,12 +2,8 @@ package com.ironxiao.frpc.helper;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Handler;
-import android.os.Message;
-import android.provider.Settings;
 import android.util.Log;
 
-import com.ironxiao.frpc.HistoryActivity;
 import com.ironxiao.frpc.sql.HistoryDBManager;
 
 import org.xutils.http.RequestParams;
@@ -20,9 +16,9 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class SocketClientHelper {
@@ -48,31 +44,14 @@ public class SocketClientHelper {
     private int serverPort_;
     private String cmd_;
 
-    ArrayList<DataDefines.SGasInfo> gasInfoList = new ArrayList<>();
-
     public void ReStart(Context context) {
         if (GetSocketIp(context) != null && GetSocketPort(context) != null && GasInfoHelper.Instance().GetCommand(context) != null) {
             serverIp_ = GetSocketIp(context);
             serverPort_ = Integer.parseInt(GetSocketPort(context));
             cmd_ = GasInfoHelper.Instance().GetCommand(context);
-            CheckAbnormalCase();
+            RunTick();
         }
-        if (GasInfoHelper.Instance().GetGases(context) != null) {
-            String str = GasInfoHelper.Instance().GetGases(context);
-            String[] gasArray = str.split(";");
-            if (gasArray.length >= 4) {
-                for (int i = 0; i < 4; i++) {
-                    String[] itemArray = gasArray[i].split(",");
-                    if (itemArray.length >= 4) {
-                        DataDefines.SGasInfo item = new DataDefines.SGasInfo();
-                        item.firstValue = Integer.parseInt(itemArray[2]);
-                        item.secondValue = Integer.parseInt(itemArray[3]);
-                        item.gasName = itemArray[1];
-                        gasInfoList.add(item);
-                    }
-                }
-            }
-        }
+        ProjectUtils.AnalysisGasBaseInfoList(context);
     }
 
     private void StartSocket() throws IOException {
@@ -117,22 +96,17 @@ public class SocketClientHelper {
                 for (int i = 0; i < count; i++) {
                     int value = Integer.parseInt(data.substring(2 + 2 * i, 2 + 2 * i + 2), 16);
                     gasValues += value + ",";
-
-                    DataDefines.SGasInfo gasInfo = gasInfoList.get(i);
-                    gasInfo.gasValue = value;
-                    gasInfo.level = value >= gasInfo.secondValue ? DataDefines.EWarningLevel.SecondAlarm : (
-                            value >= gasInfo.firstValue ? DataDefines.EWarningLevel.FirstAlarm : DataDefines.EWarningLevel.Normal);
-
-                    HistoryDBManager.AddInfo(i + 1, String.valueOf(AndroidUtils.GetTimeStampUnix()), value);
                 }
-                SyncDataToServer(gasValues);
-                EventManager.Instance().DisPatch(DataDefines.NotifyType.UpdateRealtimeGasData, gasInfoList);
+                SyncRealtimeDataToServer(gasValues);
+                SyncSingleHistoryDataToServer(gasValues);
+
+                HistoryDBManager.AddInfo(AndroidUtils.GetNowTimeStampUnix(), gasValues);
+                EventManager.Instance().DisPatch(DataDefines.NotifyType.UpdateRealtimeGasData, ProjectUtils.GasValuesToSGasInfoList(gasValues, 0));
             }
         }
     }
 
-    public void SyncDataToServer(String gasValues) {
-        Log.d(TAG, "开始同步数据到服务器");
+    public void SyncRealtimeDataToServer(String gasValues) {
         RequestParams params = new RequestParams("http://www.huaiantegang.com/Handler/Camera.ashx");
         params.addBodyParameter("requestType", "UpdateRealtimeGasData");
         params.addBodyParameter("androidID", AndroidUtils.GetAndroidID(params.getContext()));
@@ -158,6 +132,33 @@ public class SocketClientHelper {
         });
     }
 
+    public void SyncSingleHistoryDataToServer(String gasValues) {
+        RequestParams params = new RequestParams("http://www.huaiantegang.com/Handler/CameraHistory.ashx");
+        params.addBodyParameter("requestType", "InsertSingleData");
+        params.addBodyParameter("androidID", AndroidUtils.GetAndroidID(params.getContext()));
+        params.addBodyParameter("timeStamp", String.valueOf(AndroidUtils.GetNowTimeStampUnix()));
+        params.addBodyParameter("gasValues", gasValues);
+        x.http().post(params, new org.xutils.common.Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Log.d(TAG, "同步单个历史数据到服务器成功");
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Log.d(TAG, "同步单个历史数据到服务器出错:" + ex.getMessage());
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+            }
+
+            @Override
+            public void onFinished() {
+            }
+        });
+    }
+
     private void CloseSocket() throws IOException {
         if (client_ != null) {
             Log.d(TAG, "关闭Socket");
@@ -169,32 +170,82 @@ public class SocketClientHelper {
         }
     }
 
-    private boolean isRunCheck = false;
+    private boolean isRunTick = false;
 
-    private void CheckAbnormalCase() {
-        if (isRunCheck) {
+    void RunTick() {
+        if (isRunTick) {
             return;
         }
-        isRunCheck = true;
-        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+        isRunTick = true;
         Runnable command = new Runnable() {
             @Override
             public void run() {
-                checkResponseSeconds_++;
-                Log.d(TAG, "检测响应时间: " + checkResponseSeconds_);
-                if (checkResponseSeconds_ > overTime) {
-                    Log.d(TAG, "服务端长时间没有响应，socket重新连接");
-                    checkResponseSeconds_ = 0;
-                    try {
-                        CloseSocket();
-                        StartSocket();
-                    } catch (IOException e) {
-                        Log.d(TAG, "重新启动socket失败：" + e.getMessage());
-                    }
-                }
+                CheckAbnormalCaseTick();
+                CheckExpireInfoTick();
             }
         };
-        executorService.scheduleAtFixedRate(command, 0, 1, TimeUnit.SECONDS);
+        AndroidUtils.GethreadPool().scheduleAtFixedRate(command, 0, 1, TimeUnit.SECONDS);
+    }
+
+    int tempExpireInfoTime = 0;
+    int maxExpireInfoTime = 5; // 5天
+    int checkOneRoundTime = 3600; // 1小时
+
+    void CheckExpireInfoTick() {
+        tempExpireInfoTime++;
+        if (tempExpireInfoTime > checkOneRoundTime) {
+            Log.d(TAG, checkOneRoundTime + "秒检测删除一次" + maxExpireInfoTime + "天前的数据");
+            tempExpireInfoTime = 0;
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_MONTH, -maxExpireInfoTime);
+            HistoryDBManager.DeleteExpireInfo((int) AndroidUtils.GetStampUnix(calendar));
+            DeleteServerExpireInfo((int) AndroidUtils.GetStampUnix(calendar));
+        }
+    }
+
+    void DeleteServerExpireInfo(int timeStamp) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                RequestParams params = new RequestParams("http://www.huaiantegang.com/Handler/CameraHistory.ashx");
+                params.addBodyParameter("requestType", "DeleteHistoryData");
+                params.addBodyParameter("timeStamp", String.valueOf(timeStamp));
+                x.http().post(params, new org.xutils.common.Callback.CommonCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Log.d(TAG, "删除服务器过期历史数据成功");
+                    }
+
+                    @Override
+                    public void onError(Throwable ex, boolean isOnCallback) {
+                        Log.d(TAG, "删除服务器过期历史数据出错:" + ex.getMessage());
+                    }
+
+                    @Override
+                    public void onCancelled(CancelledException cex) {
+                    }
+
+                    @Override
+                    public void onFinished() {
+                    }
+                });
+            }
+        }).start();
+    }
+
+    private void CheckAbnormalCaseTick() {
+        checkResponseSeconds_++;
+        Log.d(TAG, "检测响应时间: " + checkResponseSeconds_);
+        if (checkResponseSeconds_ > overTime) {
+            Log.d(TAG, "服务端长时间没有响应，socket重新连接");
+            checkResponseSeconds_ = 0;
+            try {
+                CloseSocket();
+                StartSocket();
+            } catch (IOException e) {
+                Log.d(TAG, "重新启动socket失败：" + e.getMessage());
+            }
+        }
     }
 
     public void SaveData(Context context, String socketIP, String socketPort) {

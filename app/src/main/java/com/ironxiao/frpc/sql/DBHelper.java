@@ -17,7 +17,7 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         // AndroidID，气体索引，时间戳，气体值
-        String sql = "create table CameraHistory(ID integer primary key autoincrement,AndroidID varchar(20), GasIndex char(1), TimeStamp char(13), GasValue float)";
+        String sql = "create table CameraHistory(ID integer primary key autoincrement,AndroidID varchar(20), TimeStamp int, GasValues varchar(20))";
         sqLiteDatabase.execSQL(sql);
     }
 
