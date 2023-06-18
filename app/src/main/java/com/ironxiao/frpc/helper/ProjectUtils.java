@@ -2,6 +2,7 @@ package com.ironxiao.frpc.helper;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ public class ProjectUtils {
     static ArrayList<DataDefines.SGasInfo> gasInfoList_ = new ArrayList<>();
 
     public static void AnalysisGasBaseInfoList(Context context) {
+        gasInfoList_.clear();
         String content = GasInfoHelper.Instance().GetGases(context);
         if (content != null) {
             String[] gasArray = content.split(";");
@@ -48,7 +50,7 @@ public class ProjectUtils {
         ArrayList<DataDefines.SGasInfo> gasBaseInfoList = GetGasBaseInfoList();
         ArrayList<DataDefines.SGasInfo> list = new ArrayList<>();
         String[] values = gasValues.split(",");
-        if (values.length >= 4) {
+        if (values.length >= 4 && gasBaseInfoList.size() > 0) {
             for (int j = 0; j < 4; j++) {
                 DataDefines.SGasInfo model = new DataDefines.SGasInfo();
                 model.firstValue = gasBaseInfoList.get(j).firstValue;
