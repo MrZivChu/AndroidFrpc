@@ -1,8 +1,23 @@
 package com.ironxiao.frpc.helper;
 
+import static android.content.Context.NOTIFICATION_SERVICE;
+
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.provider.Settings;
 import android.util.Log;
+import android.widget.RemoteViews;
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
+
+import com.ironxiao.frpc.MainActivity;
+import com.ironxiao.frpc.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -81,5 +96,16 @@ public class AndroidUtils {
 
     public static ScheduledExecutorService GethreadPool() {
         return executorService_;
+    }
+
+
+    public static void OpenNotificationSettingsForApp(Context context) {
+        Intent intent = new Intent();
+        intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+        intent.putExtra("app_package", context.getPackageName());
+        intent.putExtra("app_uid", context.getApplicationInfo().uid);
+        intent.putExtra("android.provider.extra.APP_PACKAGE", context.getPackageName());
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
+        context.startActivity(intent);
     }
 }

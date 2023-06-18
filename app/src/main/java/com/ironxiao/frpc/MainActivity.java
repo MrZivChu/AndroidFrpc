@@ -8,6 +8,8 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationChannelCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -146,5 +148,15 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         }).start();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        NotificationManagerCompat notification = NotificationManagerCompat.from(getApplicationContext());
+        boolean isEnabled = notification.areNotificationsEnabled();
+        if(!isEnabled){
+            AndroidUtils.OpenNotificationSettingsForApp(getApplicationContext());
+        }
     }
 }
