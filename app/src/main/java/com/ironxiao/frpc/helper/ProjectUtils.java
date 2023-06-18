@@ -2,6 +2,7 @@ package com.ironxiao.frpc.helper;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class ProjectUtils {
     public static void AnalysisGasBaseInfoList(Context context) {
         gasInfoList_.clear();
         String content = GasInfoHelper.Instance().GetGases(context);
-        if (content != null) {
+        if (!TextUtils.isEmpty(content)) {
             String[] gasArray = content.split(";");
             if (gasArray.length >= 4) {
                 for (int i = 0; i < 4; i++) {

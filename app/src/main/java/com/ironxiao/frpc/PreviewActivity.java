@@ -22,6 +22,7 @@ import com.ironxiao.frpc.helper.CameraDataHelper;
 import com.hikvision.netsdk.PTZCommand;
 import com.ironxiao.frpc.helper.DataDefines;
 import com.ironxiao.frpc.helper.EventManager;
+import com.ironxiao.frpc.helper.FrpcHelper;
 import com.ironxiao.frpc.helper.ProjectUtils;
 
 import java.util.ArrayList;

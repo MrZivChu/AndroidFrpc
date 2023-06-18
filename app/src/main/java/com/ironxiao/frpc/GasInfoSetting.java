@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -71,7 +72,7 @@ public class GasInfoSetting extends Dialog {
 
         machineEdit.setText(GasInfoHelper.Instance().GetMachineID(getContext()));
         String gases = GasInfoHelper.Instance().GetGases(getContext());
-        if (gases != null && !gases.isEmpty()) {
+        if (!TextUtils.isEmpty(gases)) {
             String[] gasArray = gases.split(";");
             if (gasArray.length >= 4) {
                 String[] gas1Array = gasArray[0].split(",");

@@ -2,6 +2,7 @@ package com.ironxiao.frpc.helper;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.ironxiao.frpc.sql.HistoryDBManager;
@@ -45,7 +46,8 @@ public class SocketClientHelper {
     private String cmd_;
 
     public void ReStart(Context context) {
-        if (GetSocketIp(context) != null && GetSocketPort(context) != null && GasInfoHelper.Instance().GetCommand(context) != null) {
+        if (!TextUtils.isEmpty(GetSocketIp(context)) && !TextUtils.isEmpty(GetSocketPort(context))
+                && !TextUtils.isEmpty(GasInfoHelper.Instance().GetCommand(context))) {
             serverIp_ = GetSocketIp(context);
             serverPort_ = Integer.parseInt(GetSocketPort(context));
             cmd_ = GasInfoHelper.Instance().GetCommand(context);
@@ -72,7 +74,7 @@ public class SocketClientHelper {
                         //从服务端收消息
                         BufferedReader stdIn = new BufferedReader(new InputStreamReader(client_.getInputStream()));
                         String inputLine;
-                        while ((inputLine = stdIn.readLine()) != null) {
+                        while (!TextUtils.isEmpty(inputLine = stdIn.readLine())) {
                             Log.d(TAG, "收到服务端消息: " + inputLine);
                             AnalysisData(inputLine);
                             checkResponseSeconds_ = 0;
