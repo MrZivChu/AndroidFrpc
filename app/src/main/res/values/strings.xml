@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">frpc</string>
+    <string name="app_name">气体检测系统</string>
     <string name="start_frpc">start frpc</string>
     <string name="quit">QUIT</string>
     <string name="server_addr">server_addr</string>
