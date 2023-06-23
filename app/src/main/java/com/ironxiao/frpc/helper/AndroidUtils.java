@@ -85,7 +85,29 @@ public class AndroidUtils {
         if (String.valueOf(tminute).length() == 1) {
             tminute = "0" + tminute;
         }
+        if (String.valueOf(tminute).length() == 1) {
+            tminute = "0" + tminute;
+        }
         return FormatTimer(year, month, day) + " " + thour + ":" + tminute;
+    }
+
+    public static String FormatTimer(int year, int month, int day, int hour, int minute, int seconds) {
+        String thour = String.valueOf(hour);
+        String tminute = String.valueOf(minute);
+        String tseconds = String.valueOf(seconds);
+        if (String.valueOf(thour).length() == 1) {
+            thour = "0" + thour;
+        }
+        if (String.valueOf(tminute).length() == 1) {
+            tminute = "0" + tminute;
+        }
+        if (String.valueOf(tminute).length() == 1) {
+            tminute = "0" + tminute;
+        }
+        if (String.valueOf(tseconds).length() == 1) {
+            tseconds = "0" + tseconds;
+        }
+        return FormatTimer(year, month, day) + " " + thour + ":" + tminute + ":" + tseconds;
     }
 
     static ScheduledExecutorService executorService_ = null;
@@ -105,7 +127,7 @@ public class AndroidUtils {
         intent.putExtra("app_package", context.getPackageName());
         intent.putExtra("app_uid", context.getApplicationInfo().uid);
         intent.putExtra("android.provider.extra.APP_PACKAGE", context.getPackageName());
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 }
