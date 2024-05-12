@@ -30,12 +30,13 @@ public class FrpcHelper {
             nodeCommon.add(FrpcConfig.KEY_SERVER_PORT, "7000");
             config.addNode(nodeCommon);
 
-            FrpcConfig.Node nodeLocal = new FrpcConfig.Node("camera");
+            String port = splits[3] + splits[2].substring(0, 1);
+            String name = "camera" + port;
+            FrpcConfig.Node nodeLocal = new FrpcConfig.Node(name);
             nodeLocal.add(FrpcConfig.KEY_LOCAL_TYPE, "tcp");
             nodeLocal.add(FrpcConfig.KEY_LOCAL_IP, localIP);
             nodeLocal.add(FrpcConfig.KEY_LOCAL_PORT, String.valueOf(CameraDataHelper.Instance().GetCameraPort()));
 
-            String port = splits[3] + splits[2].substring(0, 1);
             CameraDataHelper.Instance().SaveFrpPort(context, port);
             nodeLocal.add(FrpcConfig.KEY_REMOTE_PORT, port);
             config.addNode(nodeLocal);
